@@ -47,6 +47,75 @@
 					"referenceName": "AZDBKS_Cluster",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "NTBK - Users",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/Xml2ParquetSF",
+					"baseParameters": {
+						"FilePath": "/mnt/lake/Users.xml"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AZDBKS_Cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "NTBK - Posts",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/Xml2ParquetSF",
+					"baseParameters": {
+						"FilePath": "/mnt/lake/Posts.xml"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AZDBKS_Cluster",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "NTBK - PostHistory",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/Xml2ParquetSF",
+					"baseParameters": {
+						"FilePath": "/mnt/lake/PostHistory.xml"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AZDBKS_Cluster",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"annotations": []
