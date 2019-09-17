@@ -1,0 +1,105 @@
+{
+	"name": "ADLS_Posts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "Posts.parquet",
+				"fileSystem": "meetup"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "_AcceptedAnswerId",
+				"type": "INT64"
+			},
+			{
+				"name": "_AnswerCount",
+				"type": "INT64"
+			},
+			{
+				"name": "_Body",
+				"type": "UTF8"
+			},
+			{
+				"name": "_ClosedDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "_CommentCount",
+				"type": "INT64"
+			},
+			{
+				"name": "_CommunityOwnedDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "_CreationDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "_FavoriteCount",
+				"type": "INT64"
+			},
+			{
+				"name": "_Id",
+				"type": "INT64"
+			},
+			{
+				"name": "_LastActivityDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "_LastEditDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "_LastEditorDisplayName",
+				"type": "UTF8"
+			},
+			{
+				"name": "_LastEditorUserId",
+				"type": "INT64"
+			},
+			{
+				"name": "_OwnerDisplayName",
+				"type": "UTF8"
+			},
+			{
+				"name": "_OwnerUserId",
+				"type": "INT64"
+			},
+			{
+				"name": "_ParentId",
+				"type": "INT64"
+			},
+			{
+				"name": "_PostTypeId",
+				"type": "INT64"
+			},
+			{
+				"name": "_Score",
+				"type": "INT64"
+			},
+			{
+				"name": "_Tags",
+				"type": "UTF8"
+			},
+			{
+				"name": "_Title",
+				"type": "UTF8"
+			},
+			{
+				"name": "_ViewCount",
+				"type": "INT64"
+			}
+		]
+	}
+}

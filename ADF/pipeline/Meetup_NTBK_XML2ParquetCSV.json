@@ -1,5 +1,5 @@
 {
-	"name": "pipeline1",
+	"name": "Meetup_NTBK_XML2ParquetCSV",
 	"properties": {
 		"activities": [
 			{
