@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "ADLS_Comment",
+						"referenceName": "ADLS_Comments",
 						"type": "DatasetReference"
 					},
 					"name": "SrcComment"
