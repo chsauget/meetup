@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "comments.parquet",
+				"folderPath": "Comments.parquet",
 				"fileSystem": "meetup"
 			},
 			"compressionCodec": "snappy"
