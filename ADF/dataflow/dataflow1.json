@@ -29,7 +29,7 @@
 				}
 			],
 			"transformations": [],
-			"script": "\n\nsource(output(\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostId} as long,\n\t\t{_Score} as long,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> SrcComment\nsource(output(\n\t\t{_Count} as long,\n\t\t{_ExcerptPostId} as long,\n\t\t{_Id} as long,\n\t\t{_TagName} as string,\n\t\t{_WikiPostId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nSrcComment sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"
+			"script": "\n\nsource(output(\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostId} as long,\n\t\t{_Score} as long,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> SrcComment\nsource(output(\n\t\t{_Count} as long,\n\t\t{_ExcerptPostId} as long,\n\t\t{_Id} as long,\n\t\t{_TagName} as string,\n\t\t{_WikiPostId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nSrcComment sink(input(\n\t\tIdComment as integer,\n\t\tPostId as integer,\n\t\tScore as integer,\n\t\tText as string,\n\t\tUserDisplayName as string,\n\t\tUserId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"
 		}
 	}
 }

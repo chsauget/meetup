@@ -280,7 +280,9 @@
 						}
 					},
 					"sink": {
-						"type": "AzureSqlSink"
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE dbo.Comments",
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false
 				},
@@ -319,7 +321,9 @@
 						}
 					},
 					"sink": {
-						"type": "AzureSqlSink"
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE dbo.PostsHistory",
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false
 				},
@@ -353,7 +357,9 @@
 						"type": "AzureSqlSource"
 					},
 					"sink": {
-						"type": "AzureSqlSink"
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE dbo.Tags",
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false
 				},
@@ -392,7 +398,9 @@
 						}
 					},
 					"sink": {
-						"type": "AzureSqlSink"
+						"type": "AzureSqlSink",
+						"preCopyScript": "TRUNCATE TABLE dbo.Users",
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false
 				},
