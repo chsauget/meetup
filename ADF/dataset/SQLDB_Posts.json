@@ -1,0 +1,116 @@
+{
+	"name": "SQLDB_Posts",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB_Meetup",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SQL"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "AcceptedAnswerId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AnswerCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Body",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ClosedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CommentCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CommunityOwnedDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CreationDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FavoriteCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LastActivityDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastEditDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastEditorDisplayName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastEditorUserId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "OwnerDisplayName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "OwnerUserId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ParentId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PostTypeId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Score",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Tags",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Title",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ViewCount",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Posts"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
