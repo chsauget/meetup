@@ -5,15 +5,12 @@
 			"referenceName": "ADLS",
 			"type": "LinkedServiceReference"
 		},
-		"folder": {
-			"name": "ADLS"
-		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "Tags.csv",
+				"folderPath": "Tags.parquet",
 				"fileSystem": "meetup"
 			},
 			"compressionCodec": "snappy"
