@@ -1,0 +1,76 @@
+{
+	"name": "SQLDB_PostsHistory",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB_Meetup",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "AboutMe",
+				"type": "nvarchar"
+			},
+			{
+				"name": "AccountId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CreationDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DisplayName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DownVotes",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LastAccessDate",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Location",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProfileImageUrl",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Reputation",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "UpVotes",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Views",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "WebsiteUrl",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "PostsHistory"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
