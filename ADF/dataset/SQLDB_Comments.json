@@ -10,7 +10,36 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "IdComment",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PostId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Score",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Text",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserDisplayName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserId",
+				"type": "int",
+				"precision": 10
+			}
+		],
 		"typeProperties": {
 			"schema": "dbo",
 			"table": "Comments"
