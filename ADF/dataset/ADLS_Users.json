@@ -5,6 +5,9 @@
 			"referenceName": "ADLS",
 			"type": "LinkedServiceReference"
 		},
+		"folder": {
+			"name": "ADLS"
+		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
