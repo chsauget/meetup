@@ -18,6 +18,27 @@
 			},
 			"compressionCodec": "snappy"
 		},
-		"schema": []
+		"schema": [
+			{
+				"name": "_Count",
+				"type": "INT64"
+			},
+			{
+				"name": "_ExcerptPostId",
+				"type": "INT64"
+			},
+			{
+				"name": "_Id",
+				"type": "INT64"
+			},
+			{
+				"name": "_TagName",
+				"type": "UTF8"
+			},
+			{
+				"name": "_WikiPostId",
+				"type": "INT64"
+			}
+		]
 	}
 }
