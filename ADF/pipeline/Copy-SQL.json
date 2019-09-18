@@ -514,7 +514,12 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource"
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*.parquet"
+						}
 					},
 					"sink": {
 						"type": "AzureSqlSink",
@@ -527,8 +532,8 @@
 						"mappings": [
 							{
 								"source": {
-									"name": "Count",
-									"type": "Int32"
+									"name": "_Count",
+									"type": "Int64"
 								},
 								"sink": {
 									"name": "Count",
@@ -537,8 +542,8 @@
 							},
 							{
 								"source": {
-									"name": "ExcerptPostId",
-									"type": "Int32"
+									"name": "_ExcerptPostId",
+									"type": "Int64"
 								},
 								"sink": {
 									"name": "ExcerptPostId",
@@ -547,8 +552,8 @@
 							},
 							{
 								"source": {
-									"name": "Id",
-									"type": "Int32"
+									"name": "_Id",
+									"type": "Int64"
 								},
 								"sink": {
 									"name": "Id",
@@ -557,7 +562,7 @@
 							},
 							{
 								"source": {
-									"name": "TagName",
+									"name": "_TagName",
 									"type": "String"
 								},
 								"sink": {
@@ -567,8 +572,8 @@
 							},
 							{
 								"source": {
-									"name": "WikiPostId",
-									"type": "Int32"
+									"name": "_WikiPostId",
+									"type": "Int64"
 								},
 								"sink": {
 									"name": "WikiPostId",
@@ -580,7 +585,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SQLDB_Tags",
+						"referenceName": "ADLS_Tags",
 						"type": "DatasetReference"
 					}
 				],
