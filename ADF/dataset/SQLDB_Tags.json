@@ -1,0 +1,42 @@
+{
+	"name": "SQLDB_Tags",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB_Meetup",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Count",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ExcerptPostId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TagName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "WikiPostId",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Tags"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
