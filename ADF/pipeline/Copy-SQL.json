@@ -1,6 +1,262 @@
 {
 	"name": "Copy-SQL",
 	"properties": {
+		"activities": [
+			{
+				"name": "Copy - Posts",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*.parquet"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "_AcceptedAnswerId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "AcceptedAnswerId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_AnswerCount",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "AnswerCount",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_Body",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Body",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_ClosedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ClosedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_CommentCount",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "CommentCount",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_CommunityOwnedDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CommunityOwnedDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_CreationDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CreationDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_FavoriteCount",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "FavoriteCount",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_Id",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_LastActivityDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastActivityDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_LastEditDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastEditDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_LastEditorDisplayName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "LastEditorDisplayName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_LastEditorUserId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "LastEditorUserId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_OwnerDisplayName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "OwnerDisplayName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_OwnerUserId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "OwnerUserId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_ParentId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "ParentId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_PostTypeId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "PostTypeId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_Score",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "Score",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_Tags",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Tags",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_Title",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Title",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_ViewCount",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "ViewCount",
+									"type": "Int32"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ADLS_Posts",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SQLDB_Posts",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
 		"annotations": []
 	}
 }
