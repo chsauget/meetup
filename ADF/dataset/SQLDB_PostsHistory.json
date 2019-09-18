@@ -9,26 +9,12 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "AboutMe",
+				"name": "Comment",
 				"type": "nvarchar"
-			},
-			{
-				"name": "AccountId",
-				"type": "int",
-				"precision": 10
 			},
 			{
 				"name": "CreationDate",
 				"type": "nvarchar"
-			},
-			{
-				"name": "DisplayName",
-				"type": "nvarchar"
-			},
-			{
-				"name": "DownVotes",
-				"type": "int",
-				"precision": 10
 			},
 			{
 				"name": "Id",
@@ -36,35 +22,31 @@
 				"precision": 10
 			},
 			{
-				"name": "LastAccessDate",
-				"type": "nvarchar"
-			},
-			{
-				"name": "Location",
-				"type": "nvarchar"
-			},
-			{
-				"name": "ProfileImageUrl",
-				"type": "nvarchar"
-			},
-			{
-				"name": "Reputation",
+				"name": "PostHistoryTypeId",
 				"type": "int",
 				"precision": 10
 			},
 			{
-				"name": "UpVotes",
+				"name": "PostId",
 				"type": "int",
 				"precision": 10
 			},
 			{
-				"name": "Views",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "WebsiteUrl",
+				"name": "RevisionGUID",
 				"type": "nvarchar"
+			},
+			{
+				"name": "Text",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserDisplayName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UserId",
+				"type": "int",
+				"precision": 10
 			}
 		],
 		"typeProperties": {
