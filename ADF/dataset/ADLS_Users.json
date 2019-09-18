@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "Users.parquet",
+				"folderPath": "Users.csv",
 				"fileSystem": "meetup"
 			},
 			"compressionCodec": "snappy"
