@@ -294,8 +294,8 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "IdComment",
-									"type": "Int32"
+									"name": "CreationDate",
+									"type": "String"
 								}
 							},
 							{
@@ -304,7 +304,7 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "PostId",
+									"name": "Id",
 									"type": "Int32"
 								}
 							},
@@ -314,7 +314,7 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "Score",
+									"name": "PostId",
 									"type": "Int32"
 								}
 							},
@@ -324,13 +324,23 @@
 									"type": "Int64"
 								},
 								"sink": {
+									"name": "Score",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_Text",
+									"type": "String"
+								},
+								"sink": {
 									"name": "Text",
 									"type": "String"
 								}
 							},
 							{
 								"source": {
-									"name": "_Text",
+									"name": "_UserDisplayName",
 									"type": "String"
 								},
 								"sink": {
@@ -340,8 +350,8 @@
 							},
 							{
 								"source": {
-									"name": "_UserDisplayName",
-									"type": "String"
+									"name": "_UserId",
+									"type": "Int64"
 								},
 								"sink": {
 									"name": "UserId",
