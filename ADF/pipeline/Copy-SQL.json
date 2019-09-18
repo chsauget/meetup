@@ -284,7 +284,72 @@
 						"preCopyScript": "TRUNCATE TABLE dbo.Comments",
 						"disableMetricsCollection": false
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "_CreationDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "IdComment",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_Id",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "PostId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_PostId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "Score",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_Score",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "Text",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_Text",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UserDisplayName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_UserDisplayName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UserId",
+									"type": "Int32"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
@@ -325,7 +390,102 @@
 						"preCopyScript": "TRUNCATE TABLE dbo.PostsHistory",
 						"disableMetricsCollection": false
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "_Comment",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Comment",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_CreationDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CreationDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_Id",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_PostHistoryTypeId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "PostHistoryTypeId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_PostId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "PostId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "_RevisionGUID",
+									"type": "String"
+								},
+								"sink": {
+									"name": "RevisionGUID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_Text",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Text",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_UserDisplayName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "UserDisplayName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_UserId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "UserId",
+									"type": "Int32"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
@@ -361,7 +521,62 @@
 						"preCopyScript": "TRUNCATE TABLE dbo.Tags",
 						"disableMetricsCollection": false
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Count",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "Count",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "ExcerptPostId",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "ExcerptPostId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "Id",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "TagName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TagName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "WikiPostId",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "WikiPostId",
+									"type": "Int32"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
@@ -398,21 +613,157 @@
 						}
 					},
 					"sink": {
-						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE dbo.Users",
-						"disableMetricsCollection": false
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "_AboutMe",
+									"type": "String"
+								},
+								"sink": {
+									"name": "_AboutMe",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_AccountId",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "_AccountId",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "_CreationDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "_CreationDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_DisplayName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "_DisplayName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_DownVotes",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "_DownVotes",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "_Id",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "_Id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "_LastAccessDate",
+									"type": "String"
+								},
+								"sink": {
+									"name": "_LastAccessDate",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_Location",
+									"type": "String"
+								},
+								"sink": {
+									"name": "_Location",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_ProfileImageUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "_ProfileImageUrl",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "_Reputation",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "_Reputation",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "_UpVotes",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "_UpVotes",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "_Views",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "_Views",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "_WebsiteUrl",
+									"type": "String"
+								},
+								"sink": {
+									"name": "_WebsiteUrl",
+									"type": "String"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
-						"referenceName": "ADLS_Tags",
+						"referenceName": "ADLS_Users",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "SQLDB_Tags",
+						"referenceName": "ADLS_Users",
 						"type": "DatasetReference"
 					}
 				]
