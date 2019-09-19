@@ -1,0 +1,50 @@
+{
+	"name": "PostsByUsers",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ADLS_PostsHistory",
+						"type": "DatasetReference"
+					},
+					"name": "SrcPostHistoryByUsers"
+				},
+				{
+					"dataset": {
+						"referenceName": "ADLS_Users",
+						"type": "DatasetReference"
+					},
+					"name": "SrcUsers"
+				},
+				{
+					"dataset": {
+						"referenceName": "SQLDB_Posts",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "JoinPostsUsers"
+				},
+				{
+					"name": "Aggregate1"
+				},
+				{
+					"name": "Window1"
+				},
+				{
+					"name": "FilterPostWithoutUser"
+				},
+				{
+					"name": "Sort1"
+				}
+			],
+			"script": "\n\nsource(output(\n\t\t{_Comment} as string,\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostHistoryTypeId} as long,\n\t\t{_PostId} as long,\n\t\t{_RevisionGUID} as string,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPostHistoryByUsers\nsource(output(\n\t\t{_AboutMe} as string,\n\t\t{_AccountId} as long,\n\t\t{_CreationDate} as string,\n\t\t{_DisplayName} as string,\n\t\t{_DownVotes} as long,\n\t\t{_Id} as long,\n\t\t{_LastAccessDate} as string,\n\t\t{_Location} as string,\n\t\t{_ProfileImageUrl} as string,\n\t\t{_Reputation} as long,\n\t\t{_UpVotes} as long,\n\t\t{_Views} as long,\n\t\t{_WebsiteUrl} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcUsers\nsource(output(\n\t\tAcceptedAnswerId as integer,\n\t\tAnswerCount as integer,\n\t\tBody as string,\n\t\tClosedDate as string,\n\t\tCommentCount as integer,\n\t\tCommunityOwnedDate as string,\n\t\tCreationDate as string,\n\t\tFavoriteCount as integer,\n\t\tId as integer,\n\t\tLastActivityDate as string,\n\t\tLastEditDate as string,\n\t\tLastEditorDisplayName as string,\n\t\tLastEditorUserId as integer,\n\t\tOwnerDisplayName as string,\n\t\tOwnerUserId as integer,\n\t\tParentId as integer,\n\t\tPostTypeId as integer,\n\t\tScore as integer,\n\t\tTags as string,\n\t\tTitle as string,\n\t\tViewCount as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source1\nFilterPostWithoutUser, SrcUsers join({_UserId} == SrcUsers@{_Id},\n\tjoinType:'inner',\n\tbroadcast: 'none')~> JoinPostsUsers\nJoinPostsUsers aggregate(groupBy({_UserDisplayName},\n\t\t{_PostId}),\n\tNbEdition = count({_RevisionGUID})) ~> Aggregate1\nAggregate1 window(asc(NbEdition, true),\n\tRK = rank(NbEdition)) ~> Window1\nSrcPostHistoryByUsers filter(!isNull({_UserId})) ~> FilterPostWithoutUser\nWindow1 sort(desc(RK, false)) ~> Sort1"
+		}
+	}
+}
