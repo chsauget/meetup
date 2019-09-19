@@ -1,6 +1,9 @@
 {
 	"name": "Trv-SQL",
 	"properties": {
+		"folder": {
+			"name": "SQL"
+		},
 		"annotations": []
 	}
 }

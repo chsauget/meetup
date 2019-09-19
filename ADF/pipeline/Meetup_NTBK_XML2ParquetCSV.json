@@ -118,6 +118,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "DATA FLOW"
+		},
 		"annotations": []
 	}
 }
