@@ -628,10 +628,7 @@
 						}
 					},
 					"sink": {
-						"type": "ParquetSink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						}
+						"type": "AzureSqlSink"
 					},
 					"enableStaging": false,
 					"translator": {
@@ -778,7 +775,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "ADLS_Users",
+						"referenceName": "SQLDB_Users",
 						"type": "DatasetReference"
 					}
 				]
