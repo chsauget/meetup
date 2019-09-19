@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "PostsByTags",
+				"name": "Top100UpdatedPosts",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,15 +16,12 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "PostsByTags",
+						"referenceName": "PostsByUsers",
 						"type": "DataFlowReference"
 					}
 				}
 			}
 		],
-		"folder": {
-			"name": "DATA FLOW Transformation"
-		},
 		"annotations": []
 	}
 }
