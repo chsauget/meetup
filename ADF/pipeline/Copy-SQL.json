@@ -640,7 +640,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "_AboutMe",
+									"name": "AboutMe",
 									"type": "String"
 								}
 							},
@@ -650,8 +650,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "_AccountId",
-									"type": "Int64"
+									"name": "AccountId",
+									"type": "Int32"
 								}
 							},
 							{
@@ -660,7 +660,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "_CreationDate",
+									"name": "CreationDate",
 									"type": "String"
 								}
 							},
@@ -670,7 +670,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "_DisplayName",
+									"name": "DisplayName",
 									"type": "String"
 								}
 							},
@@ -680,8 +680,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "_DownVotes",
-									"type": "Int64"
+									"name": "DownVotes",
+									"type": "Int32"
 								}
 							},
 							{
@@ -690,8 +690,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "_Id",
-									"type": "Int64"
+									"name": "Id",
+									"type": "Int32"
 								}
 							},
 							{
@@ -700,7 +700,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "_LastAccessDate",
+									"name": "LastAccessDate",
 									"type": "String"
 								}
 							},
@@ -710,7 +710,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "_Location",
+									"name": "Location",
 									"type": "String"
 								}
 							},
@@ -720,7 +720,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "_ProfileImageUrl",
+									"name": "ProfileImageUrl",
 									"type": "String"
 								}
 							},
@@ -730,8 +730,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "_Reputation",
-									"type": "Int64"
+									"name": "Reputation",
+									"type": "Int32"
 								}
 							},
 							{
@@ -740,8 +740,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "_UpVotes",
-									"type": "Int64"
+									"name": "UpVotes",
+									"type": "Int32"
 								}
 							},
 							{
@@ -750,8 +750,8 @@
 									"type": "Int64"
 								},
 								"sink": {
-									"name": "_Views",
-									"type": "Int64"
+									"name": "Views",
+									"type": "Int32"
 								}
 							},
 							{
@@ -760,7 +760,7 @@
 									"type": "String"
 								},
 								"sink": {
-									"name": "_WebsiteUrl",
+									"name": "WebsiteUrl",
 									"type": "String"
 								}
 							}
