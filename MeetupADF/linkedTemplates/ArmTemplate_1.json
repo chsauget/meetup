@@ -1,0 +1,94 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "MeetupADF"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ADLS_Comments",
+								"type": "DatasetReference"
+							},
+							"name": "SrcComment",
+							"typeProperties": {}
+						},
+						{
+							"dataset": {
+								"referenceName": "ADLS_Tags",
+								"type": "DatasetReference"
+							},
+							"name": "source1",
+							"typeProperties": {}
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SQLDB_Comments",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [],
+					"script": "\n\nsource(output(\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostId} as long,\n\t\t{_Score} as long,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> SrcComment\nsource(output(\n\t\t{_Count} as long,\n\t\t{_ExcerptPostId} as long,\n\t\t{_Id} as long,\n\t\t{_TagName} as string,\n\t\t{_WikiPostId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nSrcComment sink(input(\n\t\tIdComment as integer,\n\t\tPostId as integer,\n\t\tScore as integer,\n\t\tText as string,\n\t\tUserDisplayName as string,\n\t\tUserId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Top100UpdatedPosts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Top100UpdatedPosts",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "PostsByUsers",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SrcPostHistoryByUsers": {},
+									"SrcUsers": {},
+									"SrcPost": {},
+									"DestTop100UpdatedPosts": {}
+								}
+							},
+							"staging": {}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}

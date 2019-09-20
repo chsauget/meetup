@@ -6,22 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory Name",
 			"defaultValue": "MeetupADF"
-		},
-		"ADLS_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'ADLS'"
-		},
-		"AZDBKS_Cluster_accessToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'AZDBKS_Cluster'"
-		},
-		"SQLDB_Meetup_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SQLDB_Meetup'"
-		},
-		"ADLS_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://gen2dlmeetup.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -280,15 +264,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_Posts",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_Posts",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -398,15 +380,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_Comments",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_Comments",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -536,15 +516,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_PostsHistory",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_PostsHistory",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -634,15 +612,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_Tags",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_Tags",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -810,15 +786,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_Users",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_Users",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					}
@@ -829,16 +803,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ADLS_Posts')]",
-				"[concat(variables('factoryId'), '/datasets/SQLDB_Posts')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Comments')]",
-				"[concat(variables('factoryId'), '/datasets/SQLDB_Comments')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_PostsHistory')]",
-				"[concat(variables('factoryId'), '/datasets/SQLDB_PostsHistory')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Tags')]",
-				"[concat(variables('factoryId'), '/datasets/SQLDB_Tags')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Users')]",
-				"[concat(variables('factoryId'), '/datasets/SQLDB_Users')]"
+				"[concat(variables('factoryId'), '/datasets/ADLS_Posts')]"
 			]
 		},
 		{
@@ -968,9 +933,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AZDBKS_Cluster')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Top100UpdatedPosts')]",
@@ -993,16 +956,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "PostsByUsers",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcPostHistoryByUsers": {},
-									"SrcUsers": {},
-									"SrcPost": {},
-									"DestTop100UpdatedPosts": {}
-								}
-							},
-							"staging": {}
+								"type": "DataFlowReference"
+							}
 						}
 					}
 				],
@@ -1044,66 +999,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Comments')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "ADLS"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "Comments.parquet",
-						"fileSystem": "meetup"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "_CreationDate",
-						"type": "UTF8"
-					},
-					{
-						"name": "_Id",
-						"type": "INT64"
-					},
-					{
-						"name": "_PostId",
-						"type": "INT64"
-					},
-					{
-						"name": "_Score",
-						"type": "INT64"
-					},
-					{
-						"name": "_Text",
-						"type": "UTF8"
-					},
-					{
-						"name": "_UserDisplayName",
-						"type": "UTF8"
-					},
-					{
-						"name": "_UserId",
-						"type": "INT64"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Posts')]",
@@ -1214,204 +1110,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_PostsHistory')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "ADLS"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "PostHistory.parquet",
-						"fileSystem": "meetup"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "_Comment",
-						"type": "UTF8"
-					},
-					{
-						"name": "_CreationDate",
-						"type": "UTF8"
-					},
-					{
-						"name": "_Id",
-						"type": "INT64"
-					},
-					{
-						"name": "_PostHistoryTypeId",
-						"type": "INT64"
-					},
-					{
-						"name": "_PostId",
-						"type": "INT64"
-					},
-					{
-						"name": "_RevisionGUID",
-						"type": "UTF8"
-					},
-					{
-						"name": "_Text",
-						"type": "UTF8"
-					},
-					{
-						"name": "_UserDisplayName",
-						"type": "UTF8"
-					},
-					{
-						"name": "_UserId",
-						"type": "INT64"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Tags')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "ADLS"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "Tags.parquet",
-						"fileSystem": "meetup"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "_Count",
-						"type": "INT64"
-					},
-					{
-						"name": "_ExcerptPostId",
-						"type": "INT64"
-					},
-					{
-						"name": "_Id",
-						"type": "INT64"
-					},
-					{
-						"name": "_TagName",
-						"type": "UTF8"
-					},
-					{
-						"name": "_WikiPostId",
-						"type": "INT64"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS_Users')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "ADLS"
-				},
-				"annotations": [],
-				"type": "Parquet",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": "Users.parquet",
-						"fileSystem": "meetup"
-					},
-					"compressionCodec": "snappy"
-				},
-				"schema": [
-					{
-						"name": "_AboutMe",
-						"type": "UTF8"
-					},
-					{
-						"name": "_AccountId",
-						"type": "INT64"
-					},
-					{
-						"name": "_CreationDate",
-						"type": "UTF8"
-					},
-					{
-						"name": "_DisplayName",
-						"type": "UTF8"
-					},
-					{
-						"name": "_DownVotes",
-						"type": "INT64"
-					},
-					{
-						"name": "_Id",
-						"type": "INT64"
-					},
-					{
-						"name": "_LastAccessDate",
-						"type": "UTF8"
-					},
-					{
-						"name": "_Location",
-						"type": "UTF8"
-					},
-					{
-						"name": "_ProfileImageUrl",
-						"type": "UTF8"
-					},
-					{
-						"name": "_Reputation",
-						"type": "INT64"
-					},
-					{
-						"name": "_UpVotes",
-						"type": "INT64"
-					},
-					{
-						"name": "_Views",
-						"type": "INT64"
-					},
-					{
-						"name": "_WebsiteUrl",
-						"type": "UTF8"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQDB_PostsByTags')]",
@@ -1447,9 +1146,7 @@
 					"table": "PostsByTags"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQDB_Top100UpdatedPosts')]",
@@ -1468,426 +1165,6 @@
 					"table": "Top100UpdatedPosts"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQLDB_Comments')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SQLDB_Meetup",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "SQL"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "IdComment",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "PostId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Score",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Text",
-						"type": "nvarchar"
-					},
-					{
-						"name": "UserDisplayName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "UserId",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Comments"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQLDB_Posts')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SQLDB_Meetup",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "SQL"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "AcceptedAnswerId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "AnswerCount",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Body",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ClosedDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CommentCount",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CommunityOwnedDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CreationDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FavoriteCount",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "LastActivityDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastEditDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastEditorDisplayName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "LastEditorUserId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "OwnerDisplayName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "OwnerUserId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ParentId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "PostTypeId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Score",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Tags",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Title",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ViewCount",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Posts"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQLDB_PostsHistory')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SQLDB_Meetup",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "SQL"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Comment",
-						"type": "nvarchar"
-					},
-					{
-						"name": "CreationDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "PostHistoryTypeId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "PostId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "RevisionGUID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Text",
-						"type": "nvarchar"
-					},
-					{
-						"name": "UserDisplayName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "UserId",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "PostsHistory"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQLDB_Tags')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SQLDB_Meetup",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "SQL"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Count",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ExcerptPostId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TagName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "WikiPostId",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Tags"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQLDB_Users')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "SQLDB_Meetup",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "SQL"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "AboutMe",
-						"type": "nvarchar"
-					},
-					{
-						"name": "AccountId",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CreationDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DisplayName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "DownVotes",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Id",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "LastAccessDate",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Location",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ProfileImageUrl",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Reputation",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "UpVotes",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Views",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "WebsiteUrl",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Users"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('ADLS_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('ADLS_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AZDBKS_Cluster')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://westeurope.azuredatabricks.net",
-					"accessToken": {
-						"type": "SecureString",
-						"value": "[parameters('AZDBKS_Cluster_accessToken')]"
-					},
-					"existingClusterId": "1020-085826-merit686"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQLDB_Meetup')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('SQLDB_Meetup_connectionString')]"
-				}
-			},
 			"dependsOn": []
 		},
 		{
@@ -1903,8 +1180,7 @@
 								"referenceName": "ADLS_Posts",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPost",
-							"typeProperties": {}
+							"name": "SrcPost"
 						}
 					],
 					"sinks": [
@@ -1954,24 +1230,21 @@
 								"referenceName": "ADLS_PostsHistory",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPostHistoryByUsers",
-							"typeProperties": {}
+							"name": "SrcPostHistoryByUsers"
 						},
 						{
 							"dataset": {
 								"referenceName": "ADLS_Users",
 								"type": "DatasetReference"
 							},
-							"name": "SrcUsers",
-							"typeProperties": {}
+							"name": "SrcUsers"
 						},
 						{
 							"dataset": {
 								"referenceName": "ADLS_Posts",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPost",
-							"typeProperties": {}
+							"name": "SrcPost"
 						}
 					],
 					"sinks": [
@@ -2020,53 +1293,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SQDB_Top100UpdatedPosts')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_PostsHistory')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Users')]",
 				"[concat(variables('factoryId'), '/datasets/ADLS_Posts')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ADLS_Comments",
-								"type": "DatasetReference"
-							},
-							"name": "SrcComment",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "ADLS_Tags",
-								"type": "DatasetReference"
-							},
-							"name": "source1",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "SQLDB_Comments",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"script": "\n\nsource(output(\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostId} as long,\n\t\t{_Score} as long,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> SrcComment\nsource(output(\n\t\t{_Count} as long,\n\t\t{_ExcerptPostId} as long,\n\t\t{_Id} as long,\n\t\t{_TagName} as string,\n\t\t{_WikiPostId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nSrcComment sink(input(\n\t\tIdComment as integer,\n\t\tPostId as integer,\n\t\tScore as integer,\n\t\tText as string,\n\t\tUserDisplayName as string,\n\t\tUserId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQLDB_Comments')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Comments')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Tags')]"
 			]
 		}
 	]
