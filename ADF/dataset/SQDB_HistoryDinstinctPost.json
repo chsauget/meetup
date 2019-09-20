@@ -1,0 +1,16 @@
+{
+	"name": "SQDB_HistoryDinstinctPost",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB_Meetup",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "HistoryDinstinctPost"
+		}
+	}
+}
