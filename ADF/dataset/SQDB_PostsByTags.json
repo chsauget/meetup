@@ -10,7 +10,21 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "_TagName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_Count",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "LastActivityDate",
+				"type": "nvarchar"
+			}
+		],
 		"typeProperties": {
 			"schema": "dbo",
 			"table": "PostsByTags"
