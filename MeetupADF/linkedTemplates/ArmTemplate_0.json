@@ -77,6 +77,25 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/IRAzure')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 68,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Meetup_NTBK_XML2ParquetCSV')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -609,6 +628,27 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/SQDB_HistoryDinstinctPost')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "HistoryDinstinctPost"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/SQDB_PostsByTags')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -617,26 +657,9 @@
 					"referenceName": "SQLDB_Meetup",
 					"type": "LinkedServiceReference"
 				},
-				"folder": {
-					"name": "SQL"
-				},
 				"annotations": [],
 				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "_TagName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "_Count",
-						"type": "bigint",
-						"precision": 19
-					},
-					{
-						"name": "LastActivityDate",
-						"type": "nvarchar"
-					}
-				],
+				"schema": [],
 				"typeProperties": {
 					"schema": "dbo",
 					"table": "PostsByTags"
@@ -1848,141 +1871,6 @@
 				"[concat(variables('factoryId'), '/datasets/SQLDB_Tags')]",
 				"[concat(variables('factoryId'), '/datasets/ADLS_Users')]",
 				"[concat(variables('factoryId'), '/datasets/SQLDB_Users')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PostsByTags')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ADLS_Posts",
-								"type": "DatasetReference"
-							},
-							"name": "SrcPost",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "SQDB_PostsByTags",
-								"type": "DatasetReference"
-							},
-							"name": "DestPostsByTags"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Select"
-						},
-						{
-							"name": "AggrTags"
-						},
-						{
-							"name": "DrvUnknown"
-						},
-						{
-							"name": "SelectPost"
-						},
-						{
-							"name": "UnpivotTags"
-						}
-					],
-					"script": "\n\nsource(output(\n\t\t{_AcceptedAnswerId} as long,\n\t\t{_AnswerCount} as long,\n\t\t{_Body} as string,\n\t\t{_ClosedDate} as string,\n\t\t{_CommentCount} as long,\n\t\t{_CommunityOwnedDate} as string,\n\t\t{_CreationDate} as string,\n\t\t{_FavoriteCount} as long,\n\t\t{_Id} as long,\n\t\t{_LastActivityDate} as string,\n\t\t{_LastEditDate} as string,\n\t\t{_LastEditorDisplayName} as string,\n\t\t{_LastEditorUserId} as long,\n\t\t{_OwnerDisplayName} as string,\n\t\t{_OwnerUserId} as long,\n\t\t{_ParentId} as long,\n\t\t{_PostTypeId} as long,\n\t\t{_Score} as long,\n\t\t{_Tags} as string,\n\t\t{_Title} as string,\n\t\t{_ViewCount} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPost\nUnpivotTags select(mapColumn(\n\t\tPostId,\n\t\tTagName = TagName1\n\t)) ~> Select\nSelect aggregate(groupBy(TagName),\n\tCount = count(PostId)) ~> AggrTags\nSelectPost derive(TagName1 = regexExtract(TagList, '<(.+?)>',1),\n\t\tTagName2 = regexExtract(TagList, '<(.+?)>',2),\n\t\tTagName3 = regexExtract(TagList, '<(.+?)>',3),\n\t\tTagName4 = regexExtract(TagList, '<(.+?)>',4),\n\t\tTagName5 = regexExtract(TagList, '<(.+?)>',5)) ~> DrvUnknown\nSrcPost select(mapColumn(\n\t\tPostId = {_Id},\n\t\tLastActivityDate = {_LastActivityDate},\n\t\tTagList = {_Tags}\n\t)) ~> SelectPost\nDrvUnknown unpivot(output(\n\t\tTags as string,\n\t\tTagName1 as string,\n\t\tTagName2 as string,\n\t\tTagName3 as string,\n\t\tTagName4 as string,\n\t\tTagName5 as string\n\t),\n\tungroupBy(PostId),\n\tlateral: true,\n\tignoreNullPivots: false) ~> UnpivotTags\nAggrTags sink(input(\n\t\t{_TagName} as string,\n\t\t{_Count} as long,\n\t\tLastActivityDate as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true) ~> DestPostsByTags"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQDB_PostsByTags')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Posts')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PostsByUsers')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ADLS_PostsHistory",
-								"type": "DatasetReference"
-							},
-							"name": "SrcPostHistoryByUsers",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "ADLS_Users",
-								"type": "DatasetReference"
-							},
-							"name": "SrcUsers",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "ADLS_Posts",
-								"type": "DatasetReference"
-							},
-							"name": "SrcPost",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "SQDB_Top100UpdatedPosts",
-								"type": "DatasetReference"
-							},
-							"name": "DestTop100UpdatedPosts"
-						}
-					],
-					"transformations": [
-						{
-							"name": "JoinPostsUsers"
-						},
-						{
-							"name": "Aggregate1"
-						},
-						{
-							"name": "Window1"
-						},
-						{
-							"name": "FilterPostWithoutUser"
-						},
-						{
-							"name": "JoinPostHistoryPost"
-						},
-						{
-							"name": "FilterTop100"
-						},
-						{
-							"name": "SelectUser"
-						},
-						{
-							"name": "SelectPostHistory"
-						},
-						{
-							"name": "SelectPost"
-						},
-						{
-							"name": "Select1"
-						}
-					],
-					"script": "\n\nsource(output(\n\t\t{_Comment} as string,\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostHistoryTypeId} as long,\n\t\t{_PostId} as long,\n\t\t{_RevisionGUID} as string,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPostHistoryByUsers\nsource(output(\n\t\t{_AboutMe} as string,\n\t\t{_AccountId} as long,\n\t\t{_CreationDate} as string,\n\t\t{_DisplayName} as string,\n\t\t{_DownVotes} as long,\n\t\t{_Id} as long,\n\t\t{_LastAccessDate} as string,\n\t\t{_Location} as string,\n\t\t{_ProfileImageUrl} as string,\n\t\t{_Reputation} as long,\n\t\t{_UpVotes} as long,\n\t\t{_Views} as long,\n\t\t{_WebsiteUrl} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcUsers\nsource(output(\n\t\t{_AcceptedAnswerId} as long,\n\t\t{_AnswerCount} as long,\n\t\t{_Body} as string,\n\t\t{_ClosedDate} as string,\n\t\t{_CommentCount} as long,\n\t\t{_CommunityOwnedDate} as string,\n\t\t{_CreationDate} as string,\n\t\t{_FavoriteCount} as long,\n\t\t{_Id} as long,\n\t\t{_LastActivityDate} as string,\n\t\t{_LastEditDate} as string,\n\t\t{_LastEditorDisplayName} as string,\n\t\t{_LastEditorUserId} as long,\n\t\t{_OwnerDisplayName} as string,\n\t\t{_OwnerUserId} as long,\n\t\t{_ParentId} as long,\n\t\t{_PostTypeId} as long,\n\t\t{_Score} as long,\n\t\t{_Tags} as string,\n\t\t{_Title} as string,\n\t\t{_ViewCount} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPost\nSelectPostHistory, SelectUser join(SelectPostHistory@UserId == SelectUser@UserId,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> JoinPostsUsers\nJoinPostsUsers aggregate(groupBy(UserDisplayName = {DisplayName},\n\t\tPostId),\n\tNbEdition = count(RevisionGUID)) ~> Aggregate1\nAggregate1 window(desc(NbEdition, true),\n\tRK = rank(NbEdition)) ~> Window1\nSrcPostHistoryByUsers filter(!isNull({_UserId})) ~> FilterPostWithoutUser\nWindow1, SelectPost join(Aggregate1@PostId == SelectPost@PostId,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> JoinPostHistoryPost\nSelect1 filter(RK <= 100) ~> FilterTop100\nSrcUsers select(mapColumn(\n\t\tDisplayName = {_DisplayName},\n\t\tUserId = {_Id},\n\t\tLastAccessDate = {_LastAccessDate},\n\t\tLocation = {_Location},\n\t\tReputation = {_Reputation}\n\t)) ~> SelectUser\nFilterPostWithoutUser select(mapColumn(\n\t\tComment = {_Comment},\n\t\tCreationDate = {_CreationDate},\n\t\tPostHisoryId = {_Id},\n\t\tPostId = {_PostId},\n\t\tRevisionGUID = {_RevisionGUID},\n\t\tText = {_Text},\n\t\tUserId = {_UserId}\n\t)) ~> SelectPostHistory\nSrcPost select(mapColumn(\n\t\tPostId = {_Id},\n\t\tScore = {_Score},\n\t\tTags = {_Tags},\n\t\tTitle = {_Title},\n\t\tViewCount = {_ViewCount}\n\t)) ~> SelectPost\nJoinPostHistoryPost select(mapColumn(\n\t\tUserDisplayName,\n\t\tNbEdition,\n\t\tRK,\n\t\tPostId = SelectPost@PostId,\n\t\tScore,\n\t\tTags,\n\t\tTitle,\n\t\tViewCount\n\t)) ~> Select1\nFilterTop100 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true) ~> DestTop100UpdatedPosts"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQDB_Top100UpdatedPosts')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_PostsHistory')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Users')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Posts')]"
 			]
 		}
 	]

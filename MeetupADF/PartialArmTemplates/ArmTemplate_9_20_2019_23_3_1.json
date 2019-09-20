@@ -14,6 +14,152 @@
 	"resources": [
 		{
 			"name": "[concat(parameters('factoryName'), '/DistinctHistoryPosts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DistinctHistoryPosts",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DistinctHistoryPosts",
+								"type": "DataFlowReference"
+							},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DistinctHistoryPosts')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PostsByTags')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "PostsByTags",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "PostsByTags",
+								"type": "DataFlowReference"
+							},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/PostsByTags')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Top100UpdatedPosts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Top100UpdatedPosts",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "PostsByUsers",
+								"type": "DataFlowReference"
+							},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/PostsByUsers')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQDB_HistoryDinstinctPost')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "HistoryDinstinctPost"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQDB_PostsByTags')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PostsByTags"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DistinctHistoryPosts')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -25,16 +171,14 @@
 								"referenceName": "ADLS_PostsHistory",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPostHistory",
-							"typeProperties": {}
+							"name": "SrcPostHistory"
 						},
 						{
 							"dataset": {
 								"referenceName": "ADLS_Posts",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPost",
-							"typeProperties": {}
+							"name": "SrcPost"
 						}
 					],
 					"sinks": [
@@ -66,7 +210,9 @@
 					"script": "\n\nsource(output(\n\t\t{_Comment} as string,\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostHistoryTypeId} as long,\n\t\t{_PostId} as long,\n\t\t{_RevisionGUID} as string,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPostHistory\nsource(output(\n\t\t{_AcceptedAnswerId} as long,\n\t\t{_AnswerCount} as long,\n\t\t{_Body} as string,\n\t\t{_ClosedDate} as string,\n\t\t{_CommentCount} as long,\n\t\t{_CommunityOwnedDate} as string,\n\t\t{_CreationDate} as string,\n\t\t{_FavoriteCount} as long,\n\t\t{_Id} as long,\n\t\t{_LastActivityDate} as string,\n\t\t{_LastEditDate} as string,\n\t\t{_LastEditorDisplayName} as string,\n\t\t{_LastEditorUserId} as long,\n\t\t{_OwnerDisplayName} as string,\n\t\t{_OwnerUserId} as long,\n\t\t{_ParentId} as long,\n\t\t{_PostTypeId} as long,\n\t\t{_Score} as long,\n\t\t{_Tags} as string,\n\t\t{_Title} as string,\n\t\t{_ViewCount} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPost\nSort1 aggregate(groupBy(PostHId),\n\teach(match(name!='PostHId'), $$ = toString(first($$)))) ~> Distinct\nSelect2 sort(desc(CreationDate, true)) ~> Sort1\nDistinct, Select exists(PostHId == PostId && Text == PostContent,\n\tnegate:true,\n\tbroadcast: 'none')~> Exists1\nSrcPost select(mapColumn(\n\t\tPostId = {_Id},\n\t\tPostContent = {_Body}\n\t)) ~> Select\nSrcPostHistory select(mapColumn(\n\t\tPostHistoryId = {_Id},\n\t\tPostHId = {_PostId},\n\t\tRevisionGUID = {_RevisionGUID},\n\t\tText = {_Text},\n\t\tUserDisplayName = {_UserDisplayName},\n\t\tCreationDate = {_CreationDate}\n\t)) ~> Select2\nExists1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> DestHistoryDinstinctPost"
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SQDB_HistoryDinstinctPost')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PostsByTags')]",
@@ -81,8 +227,7 @@
 								"referenceName": "ADLS_Posts",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPost",
-							"typeProperties": {}
+							"name": "SrcPost"
 						}
 					],
 					"sinks": [
@@ -111,7 +256,9 @@
 					"script": "\n\nsource(output(\n\t\t{_AcceptedAnswerId} as long,\n\t\t{_AnswerCount} as long,\n\t\t{_Body} as string,\n\t\t{_ClosedDate} as string,\n\t\t{_CommentCount} as long,\n\t\t{_CommunityOwnedDate} as string,\n\t\t{_CreationDate} as string,\n\t\t{_FavoriteCount} as long,\n\t\t{_Id} as long,\n\t\t{_LastActivityDate} as string,\n\t\t{_LastEditDate} as string,\n\t\t{_LastEditorDisplayName} as string,\n\t\t{_LastEditorUserId} as long,\n\t\t{_OwnerDisplayName} as string,\n\t\t{_OwnerUserId} as long,\n\t\t{_ParentId} as long,\n\t\t{_PostTypeId} as long,\n\t\t{_Score} as long,\n\t\t{_Tags} as string,\n\t\t{_Title} as string,\n\t\t{_ViewCount} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPost\nUnpivotTags aggregate(groupBy(TagValue),\n\tCount = count(PostId)) ~> AggrTags\nSelectPost derive(TagName1 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',1),\n\t\tTagName2 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',2),\n\t\tTagName3 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',3),\n\t\tTagName4 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',4),\n\t\tTagName5 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',5)) ~> DrvUnknown\nSrcPost select(mapColumn(\n\t\tPostId = {_Id},\n\t\tLastActivityDate = {_LastActivityDate},\n\t\tTagList = {_Tags}\n\t)) ~> SelectPost\nDrvUnknown unpivot(output(\n\t\tTagName as string,\n\t\tTagValue as string\n\t),\n\tungroupBy(PostId,\n\t\tLastActivityDate,\n\t\tTagList),\n\tlateral: false,\n\tignoreNullPivots: true) ~> UnpivotTags\nAggrTags sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true) ~> DestPostsByTags"
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SQDB_PostsByTags')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PostsByUsers')]",
@@ -126,24 +273,21 @@
 								"referenceName": "ADLS_PostsHistory",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPostHistoryByUsers",
-							"typeProperties": {}
+							"name": "SrcPostHistoryByUsers"
 						},
 						{
 							"dataset": {
 								"referenceName": "ADLS_Users",
 								"type": "DatasetReference"
 							},
-							"name": "SrcUsers",
-							"typeProperties": {}
+							"name": "SrcUsers"
 						},
 						{
 							"dataset": {
 								"referenceName": "ADLS_Posts",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPost",
-							"typeProperties": {}
+							"name": "SrcPost"
 						}
 					],
 					"sinks": [
@@ -191,175 +335,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ADLS_Comments",
-								"type": "DatasetReference"
-							},
-							"name": "SrcComment",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "ADLS_Tags",
-								"type": "DatasetReference"
-							},
-							"name": "source1",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "SQLDB_Comments",
-								"type": "DatasetReference"
-							},
-							"name": "sink1"
-						}
-					],
-					"transformations": [],
-					"script": "\n\nsource(output(\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostId} as long,\n\t\t{_Score} as long,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> SrcComment\nsource(output(\n\t\t{_Count} as long,\n\t\t{_ExcerptPostId} as long,\n\t\t{_Id} as long,\n\t\t{_TagName} as string,\n\t\t{_WikiPostId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nSrcComment sink(input(\n\t\tIdComment as integer,\n\t\tPostId as integer,\n\t\tScore as integer,\n\t\tText as string,\n\t\tUserDisplayName as string,\n\t\tUserId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DistinctHistoryPosts')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "DistinctHistoryPosts",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DistinctHistoryPosts",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcPostHistory": {},
-									"SrcPost": {},
-									"DestHistoryDinstinctPost": {}
-								}
-							},
-							"staging": {},
-							"integrationRuntime": {
-								"referenceName": "IRAzure",
-								"type": "IntegrationRuntimeReference"
-							}
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DistinctHistoryPosts')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PostsByTags')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "PostsByTags",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "PostsByTags",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcPost": {},
-									"DestPostsByTags": {}
-								}
-							},
-							"staging": {},
-							"integrationRuntime": {
-								"referenceName": "IRAzure",
-								"type": "IntegrationRuntimeReference"
-							}
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/PostsByTags')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Top100UpdatedPosts')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Top100UpdatedPosts",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "PostsByUsers",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcPostHistoryByUsers": {},
-									"SrcUsers": {},
-									"SrcPost": {},
-									"DestTop100UpdatedPosts": {}
-								}
-							},
-							"staging": {},
-							"integrationRuntime": {
-								"referenceName": "IRAzure",
-								"type": "IntegrationRuntimeReference"
-							}
-						}
-					}
-				],
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/PostsByUsers')]"
-			]
 		}
 	]
 }
