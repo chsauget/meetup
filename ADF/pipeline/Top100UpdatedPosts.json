@@ -18,6 +18,10 @@
 					"dataflow": {
 						"referenceName": "PostsByUsers",
 						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "IRAzure",
+						"type": "IntegrationRuntimeReference"
 					}
 				}
 			}
