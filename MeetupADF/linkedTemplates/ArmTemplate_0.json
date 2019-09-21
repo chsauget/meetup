@@ -251,6 +251,46 @@
 							"referenceName": "SQLDB_Meetup",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "Sp - Loading UpdatedPost",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_DistinctHistoryPosts]"
+						},
+						"linkedServiceName": {
+							"referenceName": "SQLDB_Meetup",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Sp - PostbyUsers",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_PostsByUsers]"
+						},
+						"linkedServiceName": {
+							"referenceName": "SQLDB_Meetup",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"folder": {
