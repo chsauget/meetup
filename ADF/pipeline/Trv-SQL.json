@@ -23,7 +23,7 @@
 				}
 			},
 			{
-				"name": "Sp - Loading UpdatedPost ",
+				"name": "Sp - Loading UpdatedPost",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [],
 				"policy": {
