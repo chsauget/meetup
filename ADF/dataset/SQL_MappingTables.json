@@ -1,0 +1,33 @@
+{
+	"name": "SQL_MappingTables",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB_Meetup",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SQL"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SourceTable",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DestinationTable",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "TEC_LoadTables"
+		}
+	}
+}
