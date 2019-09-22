@@ -103,9 +103,11 @@
 											}
 										},
 										"sink": {
-											"type": "AzureSqlSink"
+											"type": "AzureSqlSink",
+											"disableMetricsCollection": false
 										},
-										"enableStaging": false
+										"enableStaging": false,
+										"enableSkipIncompatibleRow": false
 									},
 									"inputs": [
 										{
