@@ -22,7 +22,8 @@
 					"dataset": {
 						"referenceName": "Sql_Sp",
 						"type": "DatasetReference"
-					}
+					},
+					"firstRowOnly": false
 				}
 			},
 			{
@@ -41,7 +42,34 @@
 					"items": {
 						"value": "@activity('Lok-Sp').output.Value",
 						"type": "Expression"
-					}
+					},
+					"activities": [
+						{
+							"name": "SP-Ex",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Sp",
+									"value": "@{item().Sp}"
+								}
+							],
+							"typeProperties": {
+								"storedProcedureName": "Sp"
+							},
+							"linkedServiceName": {
+								"referenceName": "SQLDB_Meetup",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
 				}
 			}
 		],
