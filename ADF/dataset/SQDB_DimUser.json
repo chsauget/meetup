@@ -1,0 +1,55 @@
+{
+	"name": "SQDB_DimUser",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB_Meetup",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "DMT"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "UserId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "UserSk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AccountId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DisplayName",
+				"type": "varchar"
+			},
+			{
+				"name": "Location",
+				"type": "varchar"
+			},
+			{
+				"name": "StartDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "EndDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dmt",
+			"table": "DimUser"
+		}
+	}
+}
