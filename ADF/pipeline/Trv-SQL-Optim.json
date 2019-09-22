@@ -3,8 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Sp - Loading PostsByTag",
-				"type": "SqlServerStoredProcedure",
+				"name": "Lok-Sp",
+				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -15,51 +15,33 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[sp_PostsByTags]"
-				},
-				"linkedServiceName": {
-					"referenceName": "SQLDB_Meetup",
-					"type": "LinkedServiceReference"
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT Sp from dbo.TEC_LoadSp"
+					},
+					"dataset": {
+						"referenceName": "Sql_Sp",
+						"type": "DatasetReference"
+					}
 				}
 			},
 			{
-				"name": "Sp - Loading UpdatedPost",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
+				"name": "FE-sp",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lok-Sp",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[dbo].[sp_DistinctHistoryPosts]"
-				},
-				"linkedServiceName": {
-					"referenceName": "SQLDB_Meetup",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Sp - PostbyUsers",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[dbo].[sp_PostsByUsers]"
-				},
-				"linkedServiceName": {
-					"referenceName": "SQLDB_Meetup",
-					"type": "LinkedServiceReference"
+					"items": {
+						"value": "@activity('Lok-Sp').output.Value",
+						"type": "Expression"
+					}
 				}
 			}
 		],
