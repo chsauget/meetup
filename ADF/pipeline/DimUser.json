@@ -39,7 +39,7 @@
 					{
 						"activity": "DEL - User Files",
 						"dependencyConditions": [
-							"Succeeded"
+							"Completed"
 						]
 					}
 				],
