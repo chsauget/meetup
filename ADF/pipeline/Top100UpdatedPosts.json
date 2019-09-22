@@ -26,6 +26,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "DATA FLOW Transformation"
+		},
 		"annotations": []
 	}
 }
