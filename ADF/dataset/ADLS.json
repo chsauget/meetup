@@ -8,7 +8,7 @@
 		"parameters": {
 			"SourceTable": {
 				"type": "string",
-				"defaultValue": "@{item.SourceTable}"
+				"defaultValue": "@{item().SourceTable}"
 			}
 		},
 		"folder": {
