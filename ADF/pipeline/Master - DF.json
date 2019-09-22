@@ -1,0 +1,17 @@
+{
+	"name": "Master - DF",
+	"properties": {
+		"activities": [
+			{
+				"name": "EP - DimUser",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	}
+}

@@ -1,5 +1,5 @@
 {
-	"name": "EP - DimUser",
+	"name": "DimUser",
 	"properties": {
 		"activities": [
 			{
@@ -83,6 +83,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "DATA FLOW Transformation"
+		},
 		"annotations": []
 	}
 }
