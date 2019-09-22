@@ -5,14 +5,7 @@
 			{
 				"name": "LoadDimUser",
 				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "NTBK - Users",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -65,7 +58,14 @@
 			{
 				"name": "DEL - User Files",
 				"type": "Delete",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "LoadDimUser",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
