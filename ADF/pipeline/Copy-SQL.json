@@ -781,7 +781,7 @@
 				]
 			},
 			{
-				"name": "Lo-Get Tables to Load",
+				"name": "Lok-Get Tables to Load",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -802,6 +802,12 @@
 						"type": "DatasetReference"
 					}
 				}
+			},
+			{
+				"name": "FE-",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": []
 			}
 		],
 		"folder": {
