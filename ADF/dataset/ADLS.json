@@ -1,0 +1,76 @@
+{
+	"name": "ADLS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ADLS",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "ADLS"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "Users.parquet",
+				"fileSystem": "meetup"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "_AboutMe",
+				"type": "UTF8"
+			},
+			{
+				"name": "_AccountId",
+				"type": "INT64"
+			},
+			{
+				"name": "_CreationDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "_DisplayName",
+				"type": "UTF8"
+			},
+			{
+				"name": "_DownVotes",
+				"type": "INT64"
+			},
+			{
+				"name": "_Id",
+				"type": "INT64"
+			},
+			{
+				"name": "_LastAccessDate",
+				"type": "UTF8"
+			},
+			{
+				"name": "_Location",
+				"type": "UTF8"
+			},
+			{
+				"name": "_ProfileImageUrl",
+				"type": "UTF8"
+			},
+			{
+				"name": "_Reputation",
+				"type": "INT64"
+			},
+			{
+				"name": "_UpVotes",
+				"type": "INT64"
+			},
+			{
+				"name": "_Views",
+				"type": "INT64"
+			},
+			{
+				"name": "_WebsiteUrl",
+				"type": "UTF8"
+			}
+		]
+	}
+}
