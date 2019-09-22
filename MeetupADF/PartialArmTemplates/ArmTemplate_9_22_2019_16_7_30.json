@@ -1,0 +1,430 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "MeetupADF"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy-SQL-Optim')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lok-Get Tables to Load",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT \nSourceTable\n, DestinationTable\nFROM dbo.TEC_LoadTables"
+							},
+							"dataset": {
+								"referenceName": "SQL_MappingTables",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE-Copy to SQL",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lok-Get Tables to Load",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lok-Get Tables to Load').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy- to dbo",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ParquetSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"wildcardFileName": "*.parquet"
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink"
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "ADLS",
+											"type": "DatasetReference"
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SQDB",
+											"type": "DatasetReference"
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "SQL Transformation"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ADLS')]",
+				"[concat(variables('factoryId'), '/datasets/SQDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DimUser')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LoadDimUser",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "NTBK - Users",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "LoadDimUser",
+								"type": "DataFlowReference"
+							},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					},
+					{
+						"name": "NTBK - Users",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "DEL - User Files",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/Xml2ParquetSF",
+							"baseParameters": {
+								"FilePath": "/mnt/lake/Users.xml"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AZDBKS_Cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "DEL - User Files",
+						"type": "Delete",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "ADLS_Users",
+								"type": "DatasetReference"
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "DATA FLOW Transformation"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADLS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SourceTable": {
+						"type": "string",
+						"defaultValue": "@{item().SourceTable}"
+					}
+				},
+				"folder": {
+					"name": "ADLS"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().SourceTable",
+							"type": "Expression"
+						},
+						"fileSystem": "meetup"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": [
+					{
+						"name": "_AboutMe",
+						"type": "UTF8"
+					},
+					{
+						"name": "_AccountId",
+						"type": "INT64"
+					},
+					{
+						"name": "_CreationDate",
+						"type": "UTF8"
+					},
+					{
+						"name": "_DisplayName",
+						"type": "UTF8"
+					},
+					{
+						"name": "_DownVotes",
+						"type": "INT64"
+					},
+					{
+						"name": "_Id",
+						"type": "INT64"
+					},
+					{
+						"name": "_LastAccessDate",
+						"type": "UTF8"
+					},
+					{
+						"name": "_Location",
+						"type": "UTF8"
+					},
+					{
+						"name": "_ProfileImageUrl",
+						"type": "UTF8"
+					},
+					{
+						"name": "_Reputation",
+						"type": "INT64"
+					},
+					{
+						"name": "_UpVotes",
+						"type": "INT64"
+					},
+					{
+						"name": "_Views",
+						"type": "INT64"
+					},
+					{
+						"name": "_WebsiteUrl",
+						"type": "UTF8"
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQDB')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"DestinationTable": {
+						"type": "string",
+						"defaultValue": "@{item().DestinationTable}"
+					}
+				},
+				"folder": {
+					"name": "SQL"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AcceptedAnswerId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "AnswerCount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Body",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ClosedDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CommentCount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CommunityOwnedDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreationDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FavoriteCount",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LastActivityDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastEditDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastEditorDisplayName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastEditorUserId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "OwnerDisplayName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "OwnerUserId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ParentId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PostTypeId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Score",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Tags",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ViewCount",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": {
+						"value": "@dataset().DestinationTable",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

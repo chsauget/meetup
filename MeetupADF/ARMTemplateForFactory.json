@@ -53,7 +53,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT * FROM dbo.TEC_LoadTables"
+								"sqlReaderQuery": "SELECT \nSourceTable\n, DestinationTable\nFROM dbo.TEC_LoadTables"
 							},
 							"dataset": {
 								"referenceName": "SQL_MappingTables",
@@ -1002,7 +1002,7 @@
 							{
 								"activity": "DEL - User Files",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
@@ -1491,6 +1491,12 @@
 					"referenceName": "ADLS",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"SourceTable": {
+						"type": "string",
+						"defaultValue": "@{item().SourceTable}"
+					}
+				},
 				"folder": {
 					"name": "ADLS"
 				},
@@ -1499,7 +1505,10 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "Users.parquet",
+						"folderPath": {
+							"value": "@dataset().SourceTable",
+							"type": "Expression"
+						},
 						"fileSystem": "meetup"
 					},
 					"compressionCodec": "snappy"
@@ -1937,6 +1946,12 @@
 					"referenceName": "SQLDB_Meetup",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"DestinationTable": {
+						"type": "string",
+						"defaultValue": "@{item().DestinationTable}"
+					}
+				},
 				"folder": {
 					"name": "SQL"
 				},
@@ -2041,7 +2056,10 @@
 				],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "Posts"
+					"table": {
+						"value": "@dataset().DestinationTable",
+						"type": "Expression"
+					}
 				}
 			},
 			"dependsOn": [

@@ -201,7 +201,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT * FROM dbo.TEC_LoadTables"
+								"sqlReaderQuery": "SELECT \nSourceTable\n, DestinationTable\nFROM dbo.TEC_LoadTables"
 							},
 							"dataset": {
 								"referenceName": "SQL_MappingTables",
@@ -1396,7 +1396,7 @@
 							{
 								"activity": "DEL - User Files",
 								"dependencyConditions": [
-									"Succeeded"
+									"Completed"
 								]
 							}
 						],
