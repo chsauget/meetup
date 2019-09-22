@@ -823,7 +823,7 @@
 					},
 					"activities": [
 						{
-							"name": "Copy- To dbo",
+							"name": "Copy- to dbo",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -843,11 +843,20 @@
 										"wildcardFileName": "*.parquet"
 									}
 								},
+								"sink": {
+									"type": "AzureSqlSink"
+								},
 								"enableStaging": false
 							},
 							"inputs": [
 								{
 									"referenceName": "ADLS",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SQDB",
 									"type": "DatasetReference"
 								}
 							]
