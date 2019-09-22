@@ -1,0 +1,16 @@
+{
+	"name": "Trg_OnUsersFile",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/meetup/blobs/Users.xml",
+			"scope": "/subscriptions/9cf0531d-ac3b-4585-ad1c-e0e1e028b749/resourceGroups/MeetupADF/providers/Microsoft.Storage/storageAccounts/gen2dlmeetup",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
