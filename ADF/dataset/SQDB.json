@@ -8,7 +8,7 @@
 		"parameters": {
 			"DestinationTable": {
 				"type": "string",
-				"defaultValue": "@{item.DestinationTable}"
+				"defaultValue": "@{item().DestinationTable}"
 			}
 		},
 		"folder": {
