@@ -5,6 +5,12 @@
 			"referenceName": "SQLDB_Meetup",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"DestinationTable": {
+				"type": "string",
+				"defaultValue": "@{item.DestinationTable}"
+			}
+		},
 		"folder": {
 			"name": "SQL"
 		},
@@ -109,7 +115,10 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "Posts"
+			"table": {
+				"value": "@dataset().DestinationTable",
+				"type": "Expression"
+			}
 		}
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
