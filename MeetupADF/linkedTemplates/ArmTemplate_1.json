@@ -181,6 +181,42 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Sql_Sp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SourceTable",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DestinationTable",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TEC_LoadSp"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Copy-SQL-Optim')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -252,6 +288,10 @@
 										},
 										"sink": {
 											"type": "AzureSqlSink",
+											"preCopyScript": {
+												"value": "@{concat('TRUNCATE TABLE [dbo].', item().DestinationTable)}",
+												"type": "Expression"
+											},
 											"disableMetricsCollection": false
 										},
 										"enableStaging": false,
@@ -261,14 +301,18 @@
 										{
 											"referenceName": "ADLS",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"SourceTable": "@{item().SourceTable}"
+											}
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "SQDB",
 											"type": "DatasetReference",
-											"parameters": {}
+											"parameters": {
+												"DestinationTable": "@{item().DestinationTable}"
+											}
 										}
 									]
 								}
@@ -277,7 +321,7 @@
 					}
 				],
 				"folder": {
-					"name": "SQL Transformation"
+					"name": "SQL Trv"
 				},
 				"annotations": []
 			},
@@ -1081,13 +1125,103 @@
 					}
 				],
 				"folder": {
-					"name": "SQL Transformation"
+					"name": "SQL Trv"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SQLDB_Tags')]",
 				"[concat(variables('factoryId'), '/datasets/SQLDB_Users')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trv-SQL-Optim')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lok-Sp",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT Sp from dbo.TEC_LoadSp"
+							},
+							"dataset": {
+								"referenceName": "Sql_Sp",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE-sp",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lok-Sp",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lok-Sp').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "SP-Ex",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Sp",
+											"value": "@{item().Sp}"
+										}
+									],
+									"typeProperties": {
+										"storedProcedureName": {
+											"value": "@{item().Sp}",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "SQLDB_Meetup",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "SQL Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Sql_Sp')]"
 			]
 		},
 		{
@@ -1448,7 +1582,7 @@
 					}
 				],
 				"folder": {
-					"name": "DATA FLOW Transformation"
+					"name": "DATA FLOW Trv"
 				},
 				"annotations": []
 			},
@@ -1494,12 +1628,61 @@
 					}
 				],
 				"folder": {
-					"name": "DATA FLOW Transformation"
+					"name": "DATA FLOW Trv"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/DistinctHistoryPosts')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Master - SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "EP-Copy",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Copy-SQL-Optim",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "EP-Trv",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "EP-Copy",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Trv-SQL-Optim",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Copy-SQL-Optim')]",
+				"[concat(variables('factoryId'), '/pipelines/Trv-SQL-Optim')]"
 			]
 		},
 		{
@@ -1539,7 +1722,7 @@
 					}
 				],
 				"folder": {
-					"name": "DATA FLOW Transformation"
+					"name": "DATA FLOW Trv"
 				},
 				"annotations": []
 			},
@@ -1586,7 +1769,7 @@
 					}
 				],
 				"folder": {
-					"name": "DATA FLOW Transformation"
+					"name": "DATA FLOW Trv"
 				},
 				"annotations": []
 			},

@@ -218,7 +218,7 @@
 					}
 				],
 				"folder": {
-					"name": "DATA FLOW Transformation"
+					"name": "DATA FLOW Trv"
 				},
 				"annotations": []
 			},
@@ -294,7 +294,7 @@
 					}
 				],
 				"folder": {
-					"name": "SQL Transformation"
+					"name": "SQL Trv"
 				},
 				"annotations": []
 			},

@@ -1,0 +1,1502 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory Name",
+			"defaultValue": "MeetupADF"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy-SQL-Optim')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lok-Get Tables to Load",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT \nSourceTable\n, DestinationTable\nFROM dbo.TEC_LoadTables"
+							},
+							"dataset": {
+								"referenceName": "SQL_MappingTables",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE-Copy to SQL",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lok-Get Tables to Load",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lok-Get Tables to Load').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy- to dbo",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ParquetSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"wildcardFileName": "*.parquet"
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"preCopyScript": {
+												"value": "@{concat('TRUNCATE TABLE [dbo].', item().DestinationTable)}",
+												"type": "Expression"
+											},
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"enableSkipIncompatibleRow": false
+									},
+									"inputs": [
+										{
+											"referenceName": "ADLS",
+											"type": "DatasetReference",
+											"parameters": {
+												"SourceTable": "@{item().SourceTable}"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SQDB",
+											"type": "DatasetReference",
+											"parameters": {
+												"DestinationTable": "@{item().DestinationTable}"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "SQL Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy-SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy - Posts",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE dbo.Posts",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_AcceptedAnswerId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "AcceptedAnswerId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_AnswerCount",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "AnswerCount",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Body",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Body",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_ClosedDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ClosedDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_CommentCount",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "CommentCount",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_CommunityOwnedDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CommunityOwnedDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_CreationDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CreationDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_FavoriteCount",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "FavoriteCount",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastActivityDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastActivityDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastEditDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastEditDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastEditorDisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastEditorDisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastEditorUserId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "LastEditorUserId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_OwnerDisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "OwnerDisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_OwnerUserId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "OwnerUserId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_ParentId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "ParentId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_PostTypeId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "PostTypeId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Score",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Score",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Tags",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tags",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Title",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Title",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_ViewCount",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "ViewCount",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Posts",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_Posts",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Copy - Comments",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE dbo.Comments",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_CreationDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CreationDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_PostId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "PostId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Score",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Score",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Text",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_UserDisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "UserDisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_UserId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "UserId",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Comments",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_Comments",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Copy - PostsHistory",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE dbo.PostsHistory",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_Comment",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Comment",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_CreationDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CreationDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_PostHistoryTypeId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "PostHistoryTypeId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_PostId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "PostId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_RevisionGUID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "RevisionGUID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Text",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_UserDisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "UserDisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_UserId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "UserId",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_PostsHistory",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_PostsHistory",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Copy - Tags",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE dbo.Tags",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_Count",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_ExcerptPostId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "ExcerptPostId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_TagName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TagName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_WikiPostId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "WikiPostId",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Tags",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_Tags",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Copy - Users",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_AboutMe",
+											"type": "String"
+										},
+										"sink": {
+											"name": "AboutMe",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_AccountId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "AccountId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_CreationDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CreationDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_DisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "DisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_DownVotes",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "DownVotes",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastAccessDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastAccessDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Location",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Location",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_ProfileImageUrl",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProfileImageUrl",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Reputation",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Reputation",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_UpVotes",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "UpVotes",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Views",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Views",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_WebsiteUrl",
+											"type": "String"
+										},
+										"sink": {
+											"name": "WebsiteUrl",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Users",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_Users",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "SQL Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DimUser')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "LoadDimUser",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "NTBK - Users",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "LoadDimUser",
+								"type": "DataFlowReference"
+							},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					},
+					{
+						"name": "NTBK - Users",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "DEL - User Files",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/Xml2ParquetSF",
+							"baseParameters": {
+								"FilePath": "/mnt/lake/Users.xml"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AZDBKS_Cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "DEL - User Files",
+						"type": "Delete",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "ADLS_Users",
+								"type": "DatasetReference"
+							},
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "DATA FLOW Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DistinctHistoryPosts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DistinctHistoryPosts",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DistinctHistoryPosts",
+								"type": "DataFlowReference"
+							},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "DATA FLOW Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Master - SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "EP-Copy",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Copy-SQL-Optim",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true
+						}
+					},
+					{
+						"name": "EP-Trv",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "EP-Copy",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "Trv-SQL-Optim",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/Copy-SQL-Optim')]",
+				"[concat(variables('factoryId'), '/pipelines/Trv-SQL-Optim')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Meetup_NTBK_XML2ParquetCSV')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "NTBK - Comments",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/Xml2ParquetSF",
+							"baseParameters": {
+								"FilePath": "/mnt/lake/Comments.xml"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AZDBKS_Cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "NTBK - Tags",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/Xml2ParquetSF",
+							"baseParameters": {
+								"FilePath": "/mnt/lake/Tags.xml"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AZDBKS_Cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "NTBK - Users",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/Xml2ParquetSF",
+							"baseParameters": {
+								"FilePath": "/mnt/lake/Users.xml"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AZDBKS_Cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "NTBK - Posts",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/Xml2ParquetSF",
+							"baseParameters": {
+								"FilePath": "/mnt/lake/Posts.xml"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AZDBKS_Cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "NTBK - PostHistory",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/Xml2ParquetSF",
+							"baseParameters": {
+								"FilePath": "/mnt/lake/PostHistory.xml"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AZDBKS_Cluster",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "DATA FLOW Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PostsByTags')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "PostsByTags",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "PostsByTags",
+								"type": "DataFlowReference"
+							},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "DATA FLOW Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Top100UpdatedPosts')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Top100UpdatedPosts",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "PostsByUsers",
+								"type": "DataFlowReference"
+							},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
+						}
+					}
+				],
+				"folder": {
+					"name": "DATA FLOW Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trv-SQL-Optim')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lok-Sp",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT Sp from dbo.TEC_LoadSp"
+							},
+							"dataset": {
+								"referenceName": "Sql_Sp",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE-sp",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lok-Sp",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lok-Sp').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "SP-Ex",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Sp",
+											"value": "@{item().Sp}"
+										}
+									],
+									"typeProperties": {
+										"storedProcedureName": {
+											"value": "@{item().Sp}",
+											"type": "Expression"
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "SQLDB_Meetup",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "SQL Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Sql_Sp')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Trv-SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Sp - Loading PostsByTag",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_PostsByTags]"
+						},
+						"linkedServiceName": {
+							"referenceName": "SQLDB_Meetup",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Sp - Loading UpdatedPost",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_DistinctHistoryPosts]"
+						},
+						"linkedServiceName": {
+							"referenceName": "SQLDB_Meetup",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Sp - PostbyUsers",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[dbo].[sp_PostsByUsers]"
+						},
+						"linkedServiceName": {
+							"referenceName": "SQLDB_Meetup",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"folder": {
+					"name": "SQL Trv"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sql_Sp')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SourceTable",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DestinationTable",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TEC_LoadSp"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
