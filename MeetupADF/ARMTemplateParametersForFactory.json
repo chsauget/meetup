@@ -16,6 +16,9 @@
 		},
 		"ADLS_properties_typeProperties_url": {
 			"value": "https://gen2dlmeetup.dfs.core.windows.net"
+		},
+		"Trg_OnUsersFile_properties_typeProperties_scope": {
+			"value": "/subscriptions/9cf0531d-ac3b-4585-ad1c-e0e1e028b749/resourceGroups/MeetupADF/providers/Microsoft.Storage/storageAccounts/gen2dlmeetup"
 		}
 	}
 }
