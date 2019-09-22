@@ -1,0 +1,57 @@
+{
+	"name": "EP - DimUser",
+	"properties": {
+		"activities": [
+			{
+				"name": "LoadDimUser",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "NTBK - Users",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "LoadDimUser",
+						"type": "DataFlowReference"
+					}
+				}
+			},
+			{
+				"name": "NTBK - Users",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/Xml2ParquetSF",
+					"baseParameters": {
+						"FilePath": "/mnt/lake/Users.xml"
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AZDBKS_Cluster",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": []
+	}
+}
