@@ -55,15 +55,7 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": [
-								{
-									"name": "Source",
-									"value": ""
-								},
-								{
-									"name": "Destination"
-								}
-							],
+							"userProperties": [],
 							"typeProperties": {
 								"source": {
 									"type": "ParquetSource",
