@@ -6,22 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory Name",
 			"defaultValue": "MeetupADF"
-		},
-		"ADLS_accountKey": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accountKey' of 'ADLS'"
-		},
-		"AZDBKS_Cluster_accessToken": {
-			"type": "secureString",
-			"metadata": "Secure string for 'accessToken' of 'AZDBKS_Cluster'"
-		},
-		"SQLDB_Meetup_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'SQLDB_Meetup'"
-		},
-		"ADLS_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://gen2dlmeetup.dfs.core.windows.net"
 		}
 	},
 	"variables": {
@@ -280,15 +264,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_Posts",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_Posts",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -398,15 +380,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_Comments",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_Comments",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -536,15 +516,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_PostsHistory",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_PostsHistory",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -634,15 +612,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_Tags",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_Tags",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -810,15 +786,13 @@
 						"inputs": [
 							{
 								"referenceName": "ADLS_Users",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						],
 						"outputs": [
 							{
 								"referenceName": "SQLDB_Users",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -841,8 +815,7 @@
 							},
 							"dataset": {
 								"referenceName": "SQL_MappingTables",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -894,15 +867,13 @@
 									"inputs": [
 										{
 											"referenceName": "ADLS",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									],
 									"outputs": [
 										{
 											"referenceName": "SQDB",
-											"type": "DatasetReference",
-											"parameters": {}
+											"type": "DatasetReference"
 										}
 									]
 								}
@@ -952,17 +923,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "LoadDimUser",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcUsers": {},
-									"SrcDimUser": {},
-									"DestUpdateOldRows": {},
-									"DestUpsert": {},
-									"DestNewHistoricalRow": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"integrationRuntime": {
 								"referenceName": "IRAzure",
 								"type": "IntegrationRuntimeReference"
@@ -1021,8 +983,7 @@
 						"typeProperties": {
 							"dataset": {
 								"referenceName": "ADLS_Users",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"enableLogging": false,
 							"storeSettings": {
@@ -1039,8 +1000,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/LoadDimUser')]",
-				"[concat(variables('factoryId'), '/integrationRuntimes/IRAzure')]",
-				"[concat(variables('factoryId'), '/linkedServices/AZDBKS_Cluster')]",
 				"[concat(variables('factoryId'), '/datasets/ADLS_Users')]"
 			]
 		},
@@ -1065,15 +1024,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "DistinctHistoryPosts",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcPostHistory": {},
-									"SrcPost": {},
-									"DestHistoryDinstinctPost": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"integrationRuntime": {
 								"referenceName": "IRAzure",
 								"type": "IntegrationRuntimeReference"
@@ -1087,8 +1039,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DistinctHistoryPosts')]",
-				"[concat(variables('factoryId'), '/integrationRuntimes/IRAzure')]"
+				"[concat(variables('factoryId'), '/dataflows/DistinctHistoryPosts')]"
 			]
 		},
 		{
@@ -1107,8 +1058,7 @@
 								"referenceName": "DimUser",
 								"type": "PipelineReference"
 							},
-							"waitOnCompletion": true,
-							"parameters": {}
+							"waitOnCompletion": true
 						}
 					},
 					{
@@ -1121,8 +1071,7 @@
 								"referenceName": "DistinctHistoryPosts",
 								"type": "PipelineReference"
 							},
-							"waitOnCompletion": true,
-							"parameters": {}
+							"waitOnCompletion": true
 						}
 					},
 					{
@@ -1135,8 +1084,7 @@
 								"referenceName": "PostsByTags",
 								"type": "PipelineReference"
 							},
-							"waitOnCompletion": true,
-							"parameters": {}
+							"waitOnCompletion": true
 						}
 					},
 					{
@@ -1149,8 +1097,7 @@
 								"referenceName": "PostsByTags",
 								"type": "PipelineReference"
 							},
-							"waitOnCompletion": true,
-							"parameters": {}
+							"waitOnCompletion": true
 						}
 					}
 				],
@@ -1160,137 +1107,6 @@
 				"[concat(variables('factoryId'), '/pipelines/DimUser')]",
 				"[concat(variables('factoryId'), '/pipelines/DistinctHistoryPosts')]",
 				"[concat(variables('factoryId'), '/pipelines/PostsByTags')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Meetup_NTBK_XML2ParquetCSV')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "NTBK - Comments",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Shared/Xml2ParquetSF",
-							"baseParameters": {
-								"FilePath": "/mnt/lake/Comments.xml"
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AZDBKS_Cluster",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "NTBK - Tags",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Shared/Xml2ParquetSF",
-							"baseParameters": {
-								"FilePath": "/mnt/lake/Tags.xml"
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AZDBKS_Cluster",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "NTBK - Users",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Shared/Xml2ParquetSF",
-							"baseParameters": {
-								"FilePath": "/mnt/lake/Users.xml"
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AZDBKS_Cluster",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "NTBK - Posts",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Shared/Xml2ParquetSF",
-							"baseParameters": {
-								"FilePath": "/mnt/lake/Posts.xml"
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AZDBKS_Cluster",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "NTBK - PostHistory",
-						"type": "DatabricksNotebook",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"notebookPath": "/Shared/Xml2ParquetSF",
-							"baseParameters": {
-								"FilePath": "/mnt/lake/PostHistory.xml"
-							}
-						},
-						"linkedServiceName": {
-							"referenceName": "AZDBKS_Cluster",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"folder": {
-					"name": "DATA FLOW Transformation"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AZDBKS_Cluster')]"
 			]
 		},
 		{
@@ -1314,14 +1130,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "PostsByTags",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcPost": {},
-									"DestPostsByTags": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"integrationRuntime": {
 								"referenceName": "IRAzure",
 								"type": "IntegrationRuntimeReference"
@@ -1334,10 +1144,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/PostsByTags')]",
-				"[concat(variables('factoryId'), '/integrationRuntimes/IRAzure')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Top100UpdatedPosts')]",
@@ -1360,16 +1167,8 @@
 						"typeProperties": {
 							"dataflow": {
 								"referenceName": "PostsByUsers",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcPostHistoryByUsers": {},
-									"SrcUsers": {},
-									"SrcPost": {},
-									"DestTop100UpdatedPosts": {}
-								}
+								"type": "DataFlowReference"
 							},
-							"staging": {},
 							"integrationRuntime": {
 								"referenceName": "IRAzure",
 								"type": "IntegrationRuntimeReference"
@@ -1382,86 +1181,7 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/PostsByUsers')]",
-				"[concat(variables('factoryId'), '/integrationRuntimes/IRAzure')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Trv-SQL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Sp - Loading PostsByTag",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[dbo].[sp_PostsByTags]"
-						},
-						"linkedServiceName": {
-							"referenceName": "SQLDB_Meetup",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Sp - Loading UpdatedPost",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[dbo].[sp_DistinctHistoryPosts]"
-						},
-						"linkedServiceName": {
-							"referenceName": "SQLDB_Meetup",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Sp - PostbyUsers",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[dbo].[sp_PostsByUsers]"
-						},
-						"linkedServiceName": {
-							"referenceName": "SQLDB_Meetup",
-							"type": "LinkedServiceReference"
-						}
-					}
-				],
-				"folder": {
-					"name": "SQL Transformation"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS')]",
@@ -1540,9 +1260,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Comments')]",
@@ -1597,9 +1315,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Posts')]",
@@ -1710,9 +1426,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_PostsHistory')]",
@@ -1775,9 +1489,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Tags')]",
@@ -1824,9 +1536,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_Users')]",
@@ -1905,9 +1615,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQDB')]",
@@ -2025,9 +1733,7 @@
 					"table": "Posts"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQDB_DimUser')]",
@@ -2085,9 +1791,7 @@
 					"table": "DimUser"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQDB_HistoryDinstinctPost')]",
@@ -2109,9 +1813,7 @@
 					"table": "HistoryDinstinctPost"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQDB_PostsByTags')]",
@@ -2133,9 +1835,7 @@
 					"table": "PostsByTags"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQDB_Top100UpdatedPosts')]",
@@ -2157,9 +1857,7 @@
 					"table": "Top100UpdatedPosts"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQLDB_Comments')]",
@@ -2210,9 +1908,7 @@
 					"table": "Comments"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQLDB_Posts')]",
@@ -2330,9 +2026,7 @@
 					"table": "Posts"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQLDB_PostsHistory')]",
@@ -2395,9 +2089,7 @@
 					"table": "PostsHistory"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQLDB_Tags')]",
@@ -2444,9 +2136,7 @@
 					"table": "Tags"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQLDB_Users')]",
@@ -2527,9 +2217,7 @@
 					"table": "Users"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/SQL_MappingTables')]",
@@ -2565,75 +2253,6 @@
 					"table": "TEC_LoadTables"
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/SQLDB_Meetup')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ADLS')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('ADLS_properties_typeProperties_url')]",
-					"accountKey": {
-						"type": "SecureString",
-						"value": "[parameters('ADLS_accountKey')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/AZDBKS_Cluster')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureDatabricks",
-				"typeProperties": {
-					"domain": "https://westeurope.azuredatabricks.net",
-					"accessToken": {
-						"type": "SecureString",
-						"value": "[parameters('AZDBKS_Cluster_accessToken')]"
-					},
-					"existingClusterId": "1020-085826-merit686"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/SQLDB_Meetup')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('SQLDB_Meetup_connectionString')]"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/IRAzure')]",
-			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "Managed",
-				"typeProperties": {
-					"computeProperties": {
-						"location": "AutoResolve",
-						"dataFlowProperties": {
-							"computeType": "General",
-							"coreCount": 68,
-							"timeToLive": 0
-						}
-					}
-				}
-			},
 			"dependsOn": []
 		},
 		{
@@ -2649,16 +2268,14 @@
 								"referenceName": "ADLS_PostsHistory",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPostHistory",
-							"typeProperties": {}
+							"name": "SrcPostHistory"
 						},
 						{
 							"dataset": {
 								"referenceName": "ADLS_Posts",
 								"type": "DatasetReference"
 							},
-							"name": "SrcPost",
-							"typeProperties": {}
+							"name": "SrcPost"
 						}
 					],
 					"sinks": [
@@ -2709,16 +2326,14 @@
 								"referenceName": "ADLS_Users",
 								"type": "DatasetReference"
 							},
-							"name": "SrcUsers",
-							"typeProperties": {}
+							"name": "SrcUsers"
 						},
 						{
 							"dataset": {
 								"referenceName": "SQDB_DimUser",
 								"type": "DatasetReference"
 							},
-							"name": "SrcDimUser",
-							"typeProperties": {}
+							"name": "SrcDimUser"
 						}
 					],
 					"sinks": [
@@ -2773,138 +2388,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SQDB_DimUser')]",
 				"[concat(variables('factoryId'), '/datasets/ADLS_Users')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PostsByTags')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ADLS_Posts",
-								"type": "DatasetReference"
-							},
-							"name": "SrcPost",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "SQDB_PostsByTags",
-								"type": "DatasetReference"
-							},
-							"name": "DestPostsByTags"
-						}
-					],
-					"transformations": [
-						{
-							"name": "AggrTags"
-						},
-						{
-							"name": "DrvUnknown"
-						},
-						{
-							"name": "SelectPost"
-						},
-						{
-							"name": "UnpivotTags"
-						}
-					],
-					"script": "\n\nsource(output(\n\t\t{_AcceptedAnswerId} as long,\n\t\t{_AnswerCount} as long,\n\t\t{_Body} as string,\n\t\t{_ClosedDate} as string,\n\t\t{_CommentCount} as long,\n\t\t{_CommunityOwnedDate} as string,\n\t\t{_CreationDate} as string,\n\t\t{_FavoriteCount} as long,\n\t\t{_Id} as long,\n\t\t{_LastActivityDate} as string,\n\t\t{_LastEditDate} as string,\n\t\t{_LastEditorDisplayName} as string,\n\t\t{_LastEditorUserId} as long,\n\t\t{_OwnerDisplayName} as string,\n\t\t{_OwnerUserId} as long,\n\t\t{_ParentId} as long,\n\t\t{_PostTypeId} as long,\n\t\t{_Score} as long,\n\t\t{_Tags} as string,\n\t\t{_Title} as string,\n\t\t{_ViewCount} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPost\nUnpivotTags aggregate(groupBy(TagValue),\n\tCount = count(PostId)) ~> AggrTags\nSelectPost derive(TagName1 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',1),\n\t\tTagName2 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',2),\n\t\tTagName3 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',3),\n\t\tTagName4 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',4),\n\t\tTagName5 = regexExtract(TagList, '(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?(<[\\\\S]*?>)?',5)) ~> DrvUnknown\nSrcPost select(mapColumn(\n\t\tPostId = {_Id},\n\t\tLastActivityDate = {_LastActivityDate},\n\t\tTagList = {_Tags}\n\t)) ~> SelectPost\nDrvUnknown unpivot(output(\n\t\tTagName as string,\n\t\tTagValue as string\n\t),\n\tungroupBy(PostId,\n\t\tLastActivityDate,\n\t\tTagList),\n\tlateral: false,\n\tignoreNullPivots: true) ~> UnpivotTags\nAggrTags sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true) ~> DestPostsByTags"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQDB_PostsByTags')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Posts')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PostsByUsers')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ADLS_PostsHistory",
-								"type": "DatasetReference"
-							},
-							"name": "SrcPostHistoryByUsers",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "ADLS_Users",
-								"type": "DatasetReference"
-							},
-							"name": "SrcUsers",
-							"typeProperties": {}
-						},
-						{
-							"dataset": {
-								"referenceName": "ADLS_Posts",
-								"type": "DatasetReference"
-							},
-							"name": "SrcPost",
-							"typeProperties": {}
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "SQDB_Top100UpdatedPosts",
-								"type": "DatasetReference"
-							},
-							"name": "DestTop100UpdatedPosts"
-						}
-					],
-					"transformations": [
-						{
-							"name": "JoinPostsUsers"
-						},
-						{
-							"name": "Aggregate1"
-						},
-						{
-							"name": "Window1"
-						},
-						{
-							"name": "FilterPostWithoutUser"
-						},
-						{
-							"name": "JoinPostHistoryPost"
-						},
-						{
-							"name": "FilterTop100"
-						},
-						{
-							"name": "SelectUser"
-						},
-						{
-							"name": "SelectPostHistory"
-						},
-						{
-							"name": "SelectPost"
-						},
-						{
-							"name": "Select1"
-						}
-					],
-					"script": "\n\nsource(output(\n\t\t{_Comment} as string,\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostHistoryTypeId} as long,\n\t\t{_PostId} as long,\n\t\t{_RevisionGUID} as string,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPostHistoryByUsers\nsource(output(\n\t\t{_AboutMe} as string,\n\t\t{_AccountId} as long,\n\t\t{_CreationDate} as string,\n\t\t{_DisplayName} as string,\n\t\t{_DownVotes} as long,\n\t\t{_Id} as long,\n\t\t{_LastAccessDate} as string,\n\t\t{_Location} as string,\n\t\t{_ProfileImageUrl} as string,\n\t\t{_Reputation} as long,\n\t\t{_UpVotes} as long,\n\t\t{_Views} as long,\n\t\t{_WebsiteUrl} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcUsers\nsource(output(\n\t\t{_AcceptedAnswerId} as long,\n\t\t{_AnswerCount} as long,\n\t\t{_Body} as string,\n\t\t{_ClosedDate} as string,\n\t\t{_CommentCount} as long,\n\t\t{_CommunityOwnedDate} as string,\n\t\t{_CreationDate} as string,\n\t\t{_FavoriteCount} as long,\n\t\t{_Id} as long,\n\t\t{_LastActivityDate} as string,\n\t\t{_LastEditDate} as string,\n\t\t{_LastEditorDisplayName} as string,\n\t\t{_LastEditorUserId} as long,\n\t\t{_OwnerDisplayName} as string,\n\t\t{_OwnerUserId} as long,\n\t\t{_ParentId} as long,\n\t\t{_PostTypeId} as long,\n\t\t{_Score} as long,\n\t\t{_Tags} as string,\n\t\t{_Title} as string,\n\t\t{_ViewCount} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPost\nSelectPostHistory, SelectUser join(SelectPostHistory@UserId == SelectUser@UserId,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> JoinPostsUsers\nJoinPostsUsers aggregate(groupBy(UserDisplayName = {DisplayName},\n\t\tPostId),\n\tNbEdition = count(RevisionGUID)) ~> Aggregate1\nAggregate1 window(desc(NbEdition, true),\n\tRK = denseRank(NbEdition)) ~> Window1\nSrcPostHistoryByUsers filter(!isNull({_UserId})) ~> FilterPostWithoutUser\nWindow1, SelectPost join(Aggregate1@PostId == SelectPost@PostId,\n\tjoinType:'inner',\n\tbroadcast: 'none')~> JoinPostHistoryPost\nSelect1 filter(RK <= 100) ~> FilterTop100\nSrcUsers select(mapColumn(\n\t\tDisplayName = {_DisplayName},\n\t\tUserId = {_Id},\n\t\tLastAccessDate = {_LastAccessDate},\n\t\tLocation = {_Location},\n\t\tReputation = {_Reputation}\n\t)) ~> SelectUser\nFilterPostWithoutUser select(mapColumn(\n\t\tComment = {_Comment},\n\t\tCreationDate = {_CreationDate},\n\t\tPostHisoryId = {_Id},\n\t\tPostId = {_PostId},\n\t\tRevisionGUID = {_RevisionGUID},\n\t\tText = {_Text},\n\t\tUserId = {_UserId}\n\t)) ~> SelectPostHistory\nSrcPost select(mapColumn(\n\t\tPostId = {_Id},\n\t\tScore = {_Score},\n\t\tTags = {_Tags},\n\t\tTitle = {_Title},\n\t\tViewCount = {_ViewCount}\n\t)) ~> SelectPost\nJoinPostHistoryPost select(mapColumn(\n\t\tUserDisplayName,\n\t\tNbEdition,\n\t\tRK,\n\t\tPostId = SelectPost@PostId,\n\t\tScore,\n\t\tTags,\n\t\tTitle,\n\t\tViewCount\n\t)) ~> Select1\nFilterTop100 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\ttruncate:true) ~> DestTop100UpdatedPosts"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SQDB_Top100UpdatedPosts')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_PostsHistory')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Users')]",
-				"[concat(variables('factoryId'), '/datasets/ADLS_Posts')]"
 			]
 		}
 	]

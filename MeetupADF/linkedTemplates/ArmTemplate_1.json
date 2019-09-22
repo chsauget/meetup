@@ -13,6 +13,1063 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/SQLDB_Tags')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL/OLD"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Count",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ExcerptPostId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TagName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "WikiPostId",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Tags"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQLDB_Users')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL/OLD"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "AboutMe",
+						"type": "nvarchar"
+					},
+					{
+						"name": "AccountId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CreationDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DisplayName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DownVotes",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "LastAccessDate",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Location",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProfileImageUrl",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Reputation",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "UpVotes",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Views",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "WebsiteUrl",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Users"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_MappingTables')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLDB_Meetup",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "SQL"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SourceTable",
+						"type": "nvarchar"
+					},
+					{
+						"name": "DestinationTable",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "TEC_LoadTables"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy-SQL')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy - Posts",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE dbo.Posts",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_AcceptedAnswerId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "AcceptedAnswerId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_AnswerCount",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "AnswerCount",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Body",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Body",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_ClosedDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ClosedDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_CommentCount",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "CommentCount",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_CommunityOwnedDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CommunityOwnedDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_CreationDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CreationDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_FavoriteCount",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "FavoriteCount",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastActivityDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastActivityDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastEditDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastEditDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastEditorDisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastEditorDisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastEditorUserId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "LastEditorUserId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_OwnerDisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "OwnerDisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_OwnerUserId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "OwnerUserId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_ParentId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "ParentId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_PostTypeId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "PostTypeId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Score",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Score",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Tags",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Tags",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Title",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Title",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_ViewCount",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "ViewCount",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Posts",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_Posts",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy - Comments",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE dbo.Comments",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_CreationDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CreationDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_PostId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "PostId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Score",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Score",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Text",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_UserDisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "UserDisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_UserId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "UserId",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Comments",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_Comments",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy - PostsHistory",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE dbo.PostsHistory",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_Comment",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Comment",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_CreationDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CreationDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_PostHistoryTypeId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "PostHistoryTypeId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_PostId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "PostId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_RevisionGUID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "RevisionGUID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Text",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Text",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_UserDisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "UserDisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_UserId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "UserId",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_PostsHistory",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_PostsHistory",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy - Tags",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE dbo.Tags",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_Count",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Count",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_ExcerptPostId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "ExcerptPostId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_TagName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TagName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_WikiPostId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "WikiPostId",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Tags",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_Tags",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Copy - Users",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "ParquetSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFileName": "*.parquet"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "_AboutMe",
+											"type": "String"
+										},
+										"sink": {
+											"name": "AboutMe",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_AccountId",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "AccountId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_CreationDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CreationDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_DisplayName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "DisplayName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_DownVotes",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "DownVotes",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Id",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_LastAccessDate",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastAccessDate",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Location",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Location",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_ProfileImageUrl",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProfileImageUrl",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "_Reputation",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Reputation",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_UpVotes",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "UpVotes",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_Views",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "Views",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "_WebsiteUrl",
+											"type": "String"
+										},
+										"sink": {
+											"name": "WebsiteUrl",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADLS_Users",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDB_Users",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Lok-Get Tables to Load",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT * FROM dbo.TEC_LoadTables"
+							},
+							"dataset": {
+								"referenceName": "SQL_MappingTables",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "FE-Copy to SQL",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Lok-Get Tables to Load",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Lok-Get Tables to Load').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy- to dbo",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "ParquetSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"wildcardFileName": "*.parquet"
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink"
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "ADLS",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "SQDB",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"folder": {
+					"name": "SQL Transformation"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SQLDB_Tags')]",
+				"[concat(variables('factoryId'), '/datasets/SQLDB_Users')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_MappingTables')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DistinctHistoryPosts')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -64,6 +1121,82 @@
 						}
 					],
 					"script": "\n\nsource(output(\n\t\t{_Comment} as string,\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostHistoryTypeId} as long,\n\t\t{_PostId} as long,\n\t\t{_RevisionGUID} as string,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPostHistory\nsource(output(\n\t\t{_AcceptedAnswerId} as long,\n\t\t{_AnswerCount} as long,\n\t\t{_Body} as string,\n\t\t{_ClosedDate} as string,\n\t\t{_CommentCount} as long,\n\t\t{_CommunityOwnedDate} as string,\n\t\t{_CreationDate} as string,\n\t\t{_FavoriteCount} as long,\n\t\t{_Id} as long,\n\t\t{_LastActivityDate} as string,\n\t\t{_LastEditDate} as string,\n\t\t{_LastEditorDisplayName} as string,\n\t\t{_LastEditorUserId} as long,\n\t\t{_OwnerDisplayName} as string,\n\t\t{_OwnerUserId} as long,\n\t\t{_ParentId} as long,\n\t\t{_PostTypeId} as long,\n\t\t{_Score} as long,\n\t\t{_Tags} as string,\n\t\t{_Title} as string,\n\t\t{_ViewCount} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true) ~> SrcPost\nSort1 aggregate(groupBy(PostHId),\n\teach(match(name!='PostHId'), $$ = toString(first($$)))) ~> Distinct\nSelect2 sort(desc(CreationDate, true)) ~> Sort1\nDistinct, Select exists(PostHId == PostId && Text == PostContent,\n\tnegate:true,\n\tbroadcast: 'none')~> Exists1\nSrcPost select(mapColumn(\n\t\tPostId = {_Id},\n\t\tPostContent = {_Body}\n\t)) ~> Select\nSrcPostHistory select(mapColumn(\n\t\tPostHistoryId = {_Id},\n\t\tPostHId = {_PostId},\n\t\tRevisionGUID = {_RevisionGUID},\n\t\tText = {_Text},\n\t\tUserDisplayName = {_UserDisplayName},\n\t\tCreationDate = {_CreationDate}\n\t)) ~> Select2\nExists1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> DestHistoryDinstinctPost"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LoadDimUser')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ADLS_Users",
+								"type": "DatasetReference"
+							},
+							"name": "SrcUsers",
+							"typeProperties": {}
+						},
+						{
+							"dataset": {
+								"referenceName": "SQDB_DimUser",
+								"type": "DatasetReference"
+							},
+							"name": "SrcDimUser",
+							"typeProperties": {}
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SQDB_DimUser",
+								"type": "DatasetReference"
+							},
+							"name": "DestUpdateOldRows"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQDB_DimUser",
+								"type": "DatasetReference"
+							},
+							"name": "DestUpsert"
+						},
+						{
+							"dataset": {
+								"referenceName": "SQDB_DimUser",
+								"type": "DatasetReference"
+							},
+							"name": "DestNewHistoricalRow"
+						}
+					],
+					"transformations": [
+						{
+							"name": "JoinDimUser"
+						},
+						{
+							"name": "FilterOnlyLastRow"
+						},
+						{
+							"name": "CsRows"
+						},
+						{
+							"name": "DrvDateCols"
+						},
+						{
+							"name": "AlterUpdateOldRow"
+						},
+						{
+							"name": "AlterUpsert"
+						},
+						{
+							"name": "SelectCleaningName"
+						}
+					],
+					"script": "\n\nsource(output(\n\t\t{_AboutMe} as string,\n\t\t{_AccountId} as long,\n\t\t{_CreationDate} as string,\n\t\t{_DisplayName} as string,\n\t\t{_DownVotes} as long,\n\t\t{_Id} as long,\n\t\t{_LastAccessDate} as string,\n\t\t{_Location} as string,\n\t\t{_ProfileImageUrl} as string,\n\t\t{_Reputation} as long,\n\t\t{_UpVotes} as long,\n\t\t{_Views} as long,\n\t\t{_WebsiteUrl} as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> SrcUsers\nsource(output(\n\t\tUserId as integer,\n\t\tUserSk as integer,\n\t\tAccountId as integer,\n\t\tDisplayName as string,\n\t\tLocation as string,\n\t\tStartDate as timestamp,\n\t\tEndDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinferDriftedColumnTypes: true,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SrcDimUser\nSelectCleaningName, FilterOnlyLastRow join(Source_UserId == UserSk,\n\tjoinType:'left',\n\tbroadcast: 'none')~> JoinDimUser\nSrcDimUser filter(isNull(EndDate)) ~> FilterOnlyLastRow\nDrvDateCols split(!isNull(UserId) && Source_Location != Location,\n\tdisjoint: false) ~> CsRows@(SCD2Location, Upsert)\nJoinDimUser derive(NewStartDate = currentUTC(),\n\t\tNewEndDate = currentUTC()) ~> DrvDateCols\nCsRows@SCD2Location alterRow(updateIf(true())) ~> AlterUpdateOldRow\nCsRows@Upsert alterRow(upsertIf(true())) ~> AlterUpsert\nSrcUsers select(mapColumn(\n\t\tSource_AboutMe = {_AboutMe},\n\t\tSource_AccountId = {_AccountId},\n\t\tSource_CreationDate = {_CreationDate},\n\t\tSource_DisplayName = {_DisplayName},\n\t\tSource_UserId = {_Id},\n\t\tSource_Location = {_Location}\n\t)) ~> SelectCleaningName\nAlterUpdateOldRow sink(input(\n\t\tUserId as integer,\n\t\tUserSk as integer,\n\t\tAccountId as integer,\n\t\tDisplayName as string,\n\t\tLocation as string,\n\t\tStartDate as timestamp,\n\t\tEndDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:true,\n\tupsertable:false,\n\tkeys:['UserId'],\n\tmapColumn(\n\t\tUserId,\n\t\tEndDate = NewEndDate\n\t)) ~> DestUpdateOldRows\nAlterUpsert sink(input(\n\t\tUserId as integer,\n\t\tUserSk as integer,\n\t\tAccountId as integer,\n\t\tDisplayName as string,\n\t\tLocation as string,\n\t\tStartDate as timestamp,\n\t\tEndDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['UserSk'],\n\tmapColumn(\n\t\tUserSk = Source_UserId,\n\t\tAccountId = Source_AccountId,\n\t\tDisplayName = Source_DisplayName,\n\t\tLocation = Source_Location,\n\t\tStartDate = NewStartDate\n\t)) ~> DestUpsert\nCsRows@SCD2Location sink(input(\n\t\tUserId as integer,\n\t\tUserSk as integer,\n\t\tAccountId as integer,\n\t\tDisplayName as string,\n\t\tLocation as string,\n\t\tStartDate as timestamp,\n\t\tEndDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tmapColumn(\n\t\tUserSk = Source_UserId,\n\t\tAccountId = Source_AccountId,\n\t\tDisplayName = Source_DisplayName,\n\t\tLocation = Source_Location,\n\t\tStartDate = NewStartDate\n\t)) ~> DestNewHistoricalRow"
 				}
 			},
 			"dependsOn": []
@@ -193,44 +1326,114 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
+			"name": "[concat(parameters('factoryName'), '/DimUser')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ADLS_Comments",
-								"type": "DatasetReference"
-							},
-							"name": "SrcComment",
-							"typeProperties": {}
+				"activities": [
+					{
+						"name": "LoadDimUser",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
 						},
-						{
-							"dataset": {
-								"referenceName": "ADLS_Tags",
-								"type": "DatasetReference"
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "LoadDimUser",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"SrcUsers": {},
+									"SrcDimUser": {},
+									"DestUpdateOldRows": {},
+									"DestUpsert": {},
+									"DestNewHistoricalRow": {}
+								}
 							},
-							"name": "source1",
-							"typeProperties": {}
+							"staging": {},
+							"integrationRuntime": {
+								"referenceName": "IRAzure",
+								"type": "IntegrationRuntimeReference"
+							}
 						}
-					],
-					"sinks": [
-						{
+					},
+					{
+						"name": "NTBK - Users",
+						"type": "DatabricksNotebook",
+						"dependsOn": [
+							{
+								"activity": "DEL - User Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Shared/Xml2ParquetSF",
+							"baseParameters": {
+								"FilePath": "/mnt/lake/Users.xml"
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "AZDBKS_Cluster",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "DEL - User Files",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "LoadDimUser",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
 							"dataset": {
-								"referenceName": "SQLDB_Comments",
-								"type": "DatasetReference"
+								"referenceName": "ADLS_Users",
+								"type": "DatasetReference",
+								"parameters": {}
 							},
-							"name": "sink1"
+							"enableLogging": false,
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true
+							}
 						}
-					],
-					"transformations": [],
-					"script": "\n\nsource(output(\n\t\t{_CreationDate} as string,\n\t\t{_Id} as long,\n\t\t{_PostId} as long,\n\t\t{_Score} as long,\n\t\t{_Text} as string,\n\t\t{_UserDisplayName} as string,\n\t\t{_UserId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> SrcComment\nsource(output(\n\t\t{_Count} as long,\n\t\t{_ExcerptPostId} as long,\n\t\t{_Id} as long,\n\t\t{_TagName} as string,\n\t\t{_WikiPostId} as long\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1\nSrcComment sink(input(\n\t\tIdComment as integer,\n\t\tPostId as integer,\n\t\tScore as integer,\n\t\tText as string,\n\t\tUserDisplayName as string,\n\t\tUserId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'table',\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false) ~> sink1"
-				}
+					}
+				],
+				"folder": {
+					"name": "DATA FLOW Transformation"
+				},
+				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/LoadDimUser')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/DistinctHistoryPosts')]",
@@ -269,6 +1472,9 @@
 						}
 					}
 				],
+				"folder": {
+					"name": "DATA FLOW Transformation"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -311,6 +1517,9 @@
 						}
 					}
 				],
+				"folder": {
+					"name": "DATA FLOW Transformation"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -355,10 +1564,84 @@
 						}
 					}
 				],
+				"folder": {
+					"name": "DATA FLOW Transformation"
+				},
 				"annotations": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/dataflows/PostsByUsers')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Master - DF')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "EP - DimUser",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "DimUser",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "EP - Distinct History Posts",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "DistinctHistoryPosts",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "EP - PostsByTags",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PostsByTags",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					},
+					{
+						"name": "EP - Top100UpdatedPosts",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "PostsByTags",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/DimUser')]",
+				"[concat(variables('factoryId'), '/pipelines/DistinctHistoryPosts')]",
+				"[concat(variables('factoryId'), '/pipelines/PostsByTags')]"
 			]
 		}
 	]
