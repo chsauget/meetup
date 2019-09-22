@@ -1,5 +1,5 @@
 {
-	"name": "Copy-SQL-Optim",
+	"name": "Copy-SQL",
 	"properties": {
 		"activities": [
 			{
