@@ -3,52 +3,33 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "EP - DimUser",
+				"name": "EP-Copy",
 				"type": "ExecutePipeline",
 				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "DimUser",
+						"referenceName": "Copy-SQL-Optim",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
 				}
 			},
 			{
-				"name": "EP - Distinct History Posts",
+				"name": "EP-Trv",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP-Copy",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "DistinctHistoryPosts",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true
-				}
-			},
-			{
-				"name": "EP - PostsByTags",
-				"type": "ExecutePipeline",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "PostsByTags",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true
-				}
-			},
-			{
-				"name": "EP - Top100UpdatedPosts",
-				"type": "ExecutePipeline",
-				"dependsOn": [],
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "PostsByTags",
+						"referenceName": "Trv-SQL-Optim",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true
