@@ -25,6 +25,10 @@
 					"dataflow": {
 						"referenceName": "LoadDimUser",
 						"type": "DataFlowReference"
+					},
+					"integrationRuntime": {
+						"referenceName": "IRAzure",
+						"type": "IntegrationRuntimeReference"
 					}
 				}
 			},
