@@ -67,6 +67,7 @@
 								},
 								"sink": {
 									"type": "AzureSqlSink",
+									"preCopyScript": "@{concat('TRUNCATE TABLE [dbo].', item().DestinationTable)}",
 									"disableMetricsCollection": false
 								},
 								"enableStaging": false,
@@ -75,13 +76,19 @@
 							"inputs": [
 								{
 									"referenceName": "ADLS",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"SourceTable": "@{item().SourceTable}"
+									}
 								}
 							],
 							"outputs": [
 								{
 									"referenceName": "SQDB",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"DestinationTable": "@{item().DestinationTable}"
+									}
 								}
 							]
 						}
