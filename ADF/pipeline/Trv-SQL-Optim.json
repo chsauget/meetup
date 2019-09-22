@@ -62,7 +62,10 @@
 								}
 							],
 							"typeProperties": {
-								"storedProcedureName": "Sp"
+								"storedProcedureName": {
+									"value": "@{item().Sp}",
+									"type": "Expression"
+								}
 							},
 							"linkedServiceName": {
 								"referenceName": "SQLDB_Meetup",
