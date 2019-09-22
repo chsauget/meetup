@@ -5,6 +5,12 @@
 			"referenceName": "ADLS",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"SourceTable": {
+				"type": "string",
+				"defaultValue": "@{item.SourceTable}"
+			}
+		},
 		"folder": {
 			"name": "ADLS"
 		},
@@ -13,7 +19,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "Users.parquet",
+				"folderPath": {
+					"value": "@dataset().SourceTable",
+					"type": "Expression"
+				},
 				"fileSystem": "meetup"
 			},
 			"compressionCodec": "snappy"
