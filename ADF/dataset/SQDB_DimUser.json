@@ -28,11 +28,11 @@
 			},
 			{
 				"name": "DisplayName",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "Location",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "StartDate",
