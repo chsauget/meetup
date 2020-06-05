@@ -1,20 +1,14 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using System.Net.Http;
 using Newtonsoft.Json;
 using Gdo.Models;
-using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 using Amazon.Glue;
-using System.Net.Http.Headers;
-using System.Net;
 
 namespace Meetup.Function
 {
