@@ -1,0 +1,10 @@
+{
+	"name": "AKV_Playground",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://PlayGroundKV01.vault.azure.net/"
+		}
+	}
+}
