@@ -5,8 +5,15 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=DESKTOP-5U10OV1;initial catalog=StackOverflow;user id=ADF",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5YWExZTZhMC1iMTJiLTQ3OTYtOGMzZi1jZDQ2NjEzMTg1MjgiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"connectionString": "Integrated Security=False;Data Source=DESKTOP-5U10OV1;Initial Catalog=StackOverflow;User ID=ADF",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AKV_Playground",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "LocalSQLPassword"
+			}
 		},
 		"connectVia": {
 			"referenceName": "IRLocal",
