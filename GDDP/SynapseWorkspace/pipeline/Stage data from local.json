@@ -23,9 +23,77 @@
 					},
 					"dataset": {
 						"referenceName": "SQL_Generic",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": {
+								"value": "\"\"",
+								"type": "Expression"
+							},
+							"table": {
+								"value": "\"\"",
+								"type": "Expression"
+							}
+						}
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FELC - Tables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LKP - Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LKP - Tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy - Local tables to Azure file",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "SQL_Generic",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema": {
+											"value": "@item.Schema",
+											"type": "Expression"
+										},
+										"table": {
+											"value": "@item.Table",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
 				}
 			}
 		],
