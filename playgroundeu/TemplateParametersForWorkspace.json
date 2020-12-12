@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "playgroundeu"
+		},
+		"playgroundeu-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
+		},
+		"SQL_Local_connectionString": {
+			"value": ""
+		},
+		"playgroundeu-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://synapseplaygroundeu.dfs.core.windows.net"
+		},
+		"AKV_Playground_properties_typeProperties_baseUrl": {
+			"value": "https://PlayGroundKV01.vault.azure.net/"
+		}
+	}
+}
