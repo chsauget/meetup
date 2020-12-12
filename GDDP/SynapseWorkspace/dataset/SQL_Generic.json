@@ -1,0 +1,12 @@
+{
+	"name": "SQL_Generic",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQL_Local",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
