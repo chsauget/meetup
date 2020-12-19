@@ -1,0 +1,33 @@
+{
+	"name": "Dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Parquet_Generic",
+						"type": "DatasetReference"
+					},
+					"name": "srcPosts"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Parquet_Sink",
+						"type": "DatasetReference"
+					},
+					"name": "Dst1Row1File"
+				}
+			],
+			"transformations": [
+				{
+					"name": "MapDrifted1",
+					"description": "Creates an explicit mapping for each drifted column"
+				}
+			],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['StackOverflow/Full/dbo.Posts.parquet']) ~> srcPosts\nsrcPosts derive(Id = toInteger(byName('Id'))) ~> MapDrifted1\nMapDrifted1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tpartitionBy('key',\n\t\t0,\n\t\tId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Dst1Row1File"
+		}
+	}
+}
