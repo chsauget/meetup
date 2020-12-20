@@ -73,12 +73,21 @@
 					"df = spark.read.load('abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/Full/dbo.Posts.parquet', format='parquet')\n",
 					"display(df.limit(10))"
 				],
-				"execution_count": 2
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
 				"source": [
-					"df.write.partitionBy(\"id\").mode(\"overwrite\").parquet(\"abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/Partitioned/1Row1File/Posts\")"
+					"from pyspark.sql.functions import year, month, dayofmonth, hour, minute, second\n",
+					"df_final = df.withColumn(\"year\", year(df[\"CreatedDate\"])) \\\n",
+					"                .withColumn(\"month\", month(df[\"CreatedDate\"])) \\\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"CreatedDate\"])) \\\n",
+					"                .withColumn(\"hour\", hour(df[\"CreatedDate\"])) \\\n",
+					"                .withColumn(\"minute\", minute(df[\"CreatedDate\"])) \\\n",
+					"                .withColumn(\"second\", second(df[\"CreatedDate\"])) \\\n",
+					"\n",
+					"\n",
+					"df.write.partitionBy(\"year\",\"month\",\"day\",\"hour\",\"minute\",\"second\").mode(\"overwrite\").parquet(\"abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/Partitioned/1Row1File/Posts\")"
 				],
 				"execution_count": null
 			}
