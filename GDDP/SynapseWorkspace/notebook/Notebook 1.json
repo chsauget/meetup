@@ -87,7 +87,7 @@
 					"                .withColumn(\"second\", second(df[\"CreatedDate\"])) \\\n",
 					"\n",
 					"\n",
-					"df_final.write.partitionBy(\"year\",\"month\",\"day\",\"hour\",\"minute\",\"second\").mode(\"overwrite\").parquet(\"abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/Partitioned/1Row1File/Posts\")"
+					"df_final.write.partitionBy(\"year\",\"month\",\"day\",\"hour\",\"minute\",\"second\").mode(\"overwrite\").parquet(\"abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/PartitionedByYearMonthDayHourMinuteSecond/Posts\")"
 				],
 				"execution_count": null
 			}
