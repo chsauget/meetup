@@ -34,7 +34,7 @@
 					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "2.4",
-				"nodeCount": 3,
+				"nodeCount": 4,
 				"cores": 4,
 				"memory": 28,
 				"automaticScaleJobs": false
@@ -60,7 +60,7 @@
 							"aggregation": "SUM",
 							"aggByBackend": false
 						},
-						"aggData": "{\"Id\":{\"0\":46,\"7\":4,\"26\":17,\"31\":6,\"1248\":11,\"1404\":9,\"12446\":16}}",
+						"aggData": "{\"Id\":{\"0\":23723993,\"2965533\":2965497,\"2965546\":2965495}}",
 						"isSummary": false,
 						"previewData": {
 							"filter": null
@@ -71,14 +71,14 @@
 				"source": [
 					"%%pyspark\n",
 					"df = spark.read.load('abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/Full/dbo.Posts.parquet', format='parquet')\n",
-					"print(df.count())"
+					"display(df.limit(10))"
 				],
-				"execution_count": 9
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
 				"source": [
-					"df.repartition(49139907).write.mode(\"overwrite\").parquet(\"abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/Partitioned/1Row1File/Posts\")"
+					"df.write.partitionBy(\"id\").mode(\"overwrite\").parquet(\"abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/Partitioned/1Row1File/Posts\")"
 				],
 				"execution_count": null
 			}
