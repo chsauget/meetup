@@ -1,0 +1,16 @@
+{
+	"name": "Query Exemple",
+	"properties": {
+		"content": {
+			"query": "SELECT\nYEAR(CreationDate) AS [year]\n,COUNT(*)\nFROM\n    OPENROWSET(\n        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/Full/dbo.Posts.parquet',\n        FORMAT='PARQUET'\n    ) AS [result]\nGROUP BY YEAR(CreationDate)\n\nSELECT\n     [result].filepath(1) AS [year]\n    ,COUNT(*)\nFROM\n    OPENROWSET(\n        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/PartitionedByYear/Posts/year=*/*.parquet',\n        FORMAT='PARQUET'\n    ) AS [result]\nGROUP BY [result].filepath(1)\n\n\nSELECT\n     [result].filepath(1) AS [year]\n    ,COUNT(*)\nFROM\n    OPENROWSET(\n        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/PartitionedByYearMonth/Posts/year=*/month=*/*.parquet',\n        FORMAT='PARQUET'\n    ) AS [result]\nGROUP BY [result].filepath(1)\n\nSELECT\n     [result].filepath(1) AS [year]\n    ,COUNT(*)\nFROM\n    OPENROWSET(\n        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/PartitionedByYearMonthDay/Posts/year=*/month=*/day=*/*.parquet',\n        FORMAT='PARQUET'\n    ) AS [result]\nGROUP BY [result].filepath(1)\n\nSELECT\n    [result].filepath(1) AS [year]\n    ,COUNT(*)\nFROM\n    OPENROWSET(\n        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/PartitionedByYearMonthDayHour/Posts/year=*/month=*/day=*/hour=*/*.parquet',\n        FORMAT='PARQUET'\n    ) AS [result]\nGROUP BY [result].filepath(1)\n\nSELECT\n    [result].filepath(1) AS [year]\n    ,COUNT(*)\nFROM\n    OPENROWSET(\n        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/PartitionedByYearMonthDayHourMinute/Posts/year=*/month=*/day=*/hour=*/minute=*/*.parquet',\n        FORMAT='PARQUET'\n    ) AS [result]\nGROUP BY [result].filepath(1)\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "master",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}
