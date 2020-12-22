@@ -1,13 +1,16 @@
 {
 	"name": "Tests IoT",
 	"properties": {
+		"folder": {
+			"name": "IoT"
+		},
 		"content": {
 			"query": "use GuimchaDB\nGO\n\nselect * from IoTSummary",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"name": "master",
+				"name": "GuimchaDB",
 				"type": "SqlOnDemand"
 			}
 		},
