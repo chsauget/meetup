@@ -1,0 +1,124 @@
+{
+    "metadata": {
+        "kernelspec": {
+            "name": "SQL",
+            "display_name": "SQL",
+            "language": "sql"
+        },
+        "language_info": {
+            "name": "sql",
+            "version": ""
+        }
+    },
+    "nbformat_minor": 2,
+    "nbformat": 4,
+    "cells": [
+        {
+            "cell_type": "code",
+            "source": [
+                "SELECT\r\n",
+                "    COUNT([result].filepath(5))\r\n",
+                "FROM\r\n",
+                "    OPENROWSET(\r\n",
+                "        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/PartitionedByYearMonthDayHour/Posts/year=*/month=*/day=*/hour=*/*.parquet',\r\n",
+                "        FORMAT='PARQUET'\r\n",
+                "    ) AS [result]"
+            ],
+            "metadata": {
+                "azdata_cell_guid": "24fc2e66-e045-479b-8e61-6427c40ab26d"
+            },
+            "outputs": [
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Statement ID: {B2DBF86F-851C-4F0A-9374-C3F203D8B13B} | Query hash: 0x488F033CB843AA03 | Distributed request ID: {4971E456-88F6-494C-81BC-620C1EE60C7E}. Total size of data scanned is 6308 megabytes, total size of data moved is 1 megabytes, total size of data written is 0 megabytes."
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "(1 row affected)"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "display_data",
+                    "data": {
+                        "text/html": "Total execution time: 00:11:13.785"
+                    },
+                    "metadata": {}
+                },
+                {
+                    "output_type": "execute_result",
+                    "execution_count": 1,
+                    "data": {
+                        "application/vnd.dataresource+json": {
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "name": "(No column name)"
+                                    }
+                                ]
+                            },
+                            "data": [
+                                {
+                                    "0": "49139907"
+                                }
+                            ]
+                        },
+                        "text/html": "<table><tr><th>(No column name)</th></tr><tr><td>49139907</td></tr></table>"
+                    },
+                    "metadata": {
+                        "resultSet": {
+                            "id": 0,
+                            "batchId": 0,
+                            "rowCount": 1,
+                            "complete": false,
+                            "columnInfo": [
+                                {
+                                    "isBytes": false,
+                                    "isChars": false,
+                                    "isSqlVariant": false,
+                                    "isUdt": false,
+                                    "isXml": false,
+                                    "isJson": false,
+                                    "sqlDbType": 8,
+                                    "isHierarchyId": false,
+                                    "isSqlXmlType": false,
+                                    "isUnknownType": false,
+                                    "isUpdatable": false,
+                                    "allowDBNull": true,
+                                    "baseCatalogName": null,
+                                    "baseColumnName": null,
+                                    "baseSchemaName": null,
+                                    "baseServerName": null,
+                                    "baseTableName": null,
+                                    "columnName": "(No column name)",
+                                    "columnOrdinal": 0,
+                                    "columnSize": 4,
+                                    "isAliased": null,
+                                    "isAutoIncrement": false,
+                                    "isExpression": null,
+                                    "isHidden": null,
+                                    "isIdentity": false,
+                                    "isKey": null,
+                                    "isLong": false,
+                                    "isReadOnly": true,
+                                    "isUnique": false,
+                                    "numericPrecision": 10,
+                                    "numericScale": 255,
+                                    "udtAssemblyQualifiedName": null,
+                                    "dataType": "System.Int32, System.Private.CoreLib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e",
+                                    "dataTypeName": "int"
+                                }
+                            ],
+                            "specialAction": null
+                        }
+                    }
+                }
+            ],
+            "execution_count": 1
+        }
+    ]
+}
