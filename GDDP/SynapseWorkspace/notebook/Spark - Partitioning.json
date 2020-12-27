@@ -90,6 +90,45 @@
 					"df_final.write.partitionBy(\"year\",\"month\",\"day\",\"hour\",\"minute\").mode(\"overwrite\").parquet(\"abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/PartitionedByYearMonthDayHourMinute/Posts\")"
 				],
 				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%pyspark\n",
+					"df = spark.read.load('abfss://lake@synapseplaygroundeu.dfs.core.windows.net/StackOverflow/Full/dbo.Posts.parquet', format='parquet')\n",
+					"df.createOrReplaceTempView(\"sqlTable\")\n",
+					""
+				],
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"diagram": {
+						"activateDiagramType": 1,
+						"chartConfig": {
+							"category": "bar",
+							"keys": [],
+							"values": [],
+							"yLabel": "",
+							"xLabel": "",
+							"aggregation": "SUM",
+							"aggByBackend": false
+						},
+						"aggData": "{}",
+						"isSummary": false,
+						"previewData": {
+							"filter": null
+						},
+						"isSql": true
+					}
+				},
+				"source": [
+					"%%sql\n",
+					"CREATE TABLE Posts\n",
+					"    AS SELECT * FROM sqlTable"
+				],
+				"execution_count": 3
 			}
 		]
 	}
