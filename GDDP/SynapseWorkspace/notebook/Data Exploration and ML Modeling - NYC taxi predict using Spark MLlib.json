@@ -230,7 +230,7 @@
 					"# Create a new dataframe that has had the encodings applied\n",
 					"encoded_final_df = Pipeline(stages=[sI1, en1, sI2, en2]).fit(taxi_featurised_df).transform(taxi_featurised_df)"
 				],
-				"execution_count": null
+				"execution_count": 8
 			},
 			{
 				"cell_type": "markdown",
@@ -251,7 +251,7 @@
 					"# Split the dataframe into test and training dataframes\n",
 					"train_data_df, test_data_df = encoded_final_df.randomSplit([trainingFraction, testingFraction], seed=seed)"
 				],
-				"execution_count": null
+				"execution_count": 9
 			},
 			{
 				"cell_type": "markdown",
@@ -285,7 +285,7 @@
 					"metrics = BinaryClassificationMetrics(predictionAndLabels)\n",
 					"print(\"Area under ROC = %s\" % metrics.areaUnderROC)"
 				],
-				"execution_count": null
+				"execution_count": 10
 			},
 			{
 				"cell_type": "markdown",
@@ -309,7 +309,7 @@
 					"plt.ylabel('True Positive Rate')\n",
 					"plt.show()"
 				],
-				"execution_count": null
+				"execution_count": 11
 			},
 			{
 				"cell_type": "markdown",
@@ -342,6 +342,20 @@
 					"\n",
 					"model_inputs = convert_dataframe_schema(train_data_df)\n",
 					"onnx_model = convert_sklearn(lrModel, \"nyc_taxi_tip_predict\", model_inputs)"
+				],
+				"execution_count": 12
+			},
+			{
+				"cell_type": "code",
+				"source": [
+					"%%spark\n",
+					"import org.apache.spark.sql.SqlAnalyticsConnector._\n",
+					"import com.microsoft.spark.sqlanalytics.utils.Constants\n",
+					"\n",
+					"val sql_pool_name = \"Your sql pool name\" //fill in your sql pool name\n",
+					"\n",
+					"holiday_nodate.write\n",
+					"    .sqlanalytics(s\"$sql_pool_name.dbo.PublicHoliday\", Constants.INTERNAL)"
 				],
 				"execution_count": null
 			}
