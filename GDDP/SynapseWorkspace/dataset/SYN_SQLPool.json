@@ -1,0 +1,30 @@
+{
+	"name": "SYN_SQLPool",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Model",
+				"type": "varbinary"
+			},
+			{
+				"name": "Description",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Models"
+		},
+		"sqlPool": {
+			"referenceName": "SQLDW",
+			"type": "SqlPoolReference"
+		}
+	}
+}
