@@ -1,0 +1,26 @@
+{
+	"name": "AzureMLService",
+	"properties": {
+		"annotations": [],
+		"type": "AzureMLService",
+		"typeProperties": {
+			"subscriptionId": "c24ef419-76bf-4265-bb0d-e3e3f3086be2",
+			"resourceGroupName": "PlayGround",
+			"mlWorkspaceName": "meetupML",
+			"servicePrincipalId": "324e05a7-7f8c-4977-bea4-96e8811728d2",
+			"servicePrincipalKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AKV_Playground",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "MySpnSecret"
+			},
+			"tenant": "64a0dfc9-1e82-4c35-9f52-0505e4915ff6"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
