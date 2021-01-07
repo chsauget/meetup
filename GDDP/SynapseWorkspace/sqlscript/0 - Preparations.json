@@ -1,0 +1,19 @@
+{
+	"name": "0 - Preparations",
+	"properties": {
+		"folder": {
+			"name": "Demo"
+		},
+		"content": {
+			"query": "-- pour pouvoir crypter les secrets\nCREATE MASTER KEY\n\n-- création d'un secret pour ma clé CosmosDb\nCREATE DATABASE SCOPED CREDENTIAL MyCosmosDbAccountCredential\n    WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'X2zpX6cxpbEvpPiVc5ySuwUxPT5jTA8UGPuaMqEfzW97pmuIPAQGgEfYZVv4rEiPNGtxAhREwN69siXW2ggXxg==';\n\n--ALTER DATABASE GuimchaDB COLLATE LATIN1_GENERAL_100_CI_AS_SC_UTF8;\n--GO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "master",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

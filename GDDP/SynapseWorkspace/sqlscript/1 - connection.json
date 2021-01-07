@@ -1,0 +1,19 @@
+{
+	"name": "1 - connection",
+	"properties": {
+		"folder": {
+			"name": "Demo"
+		},
+		"content": {
+			"query": "SELECT rows.*\nFROM OPENROWSET(\n      PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=playgroundeu2;Database=Volcano;', --Azure Cosmos DB connection string\n      OBJECT = 'Volcano', --Container\n      SERVER_CREDENTIAL  = 'MyCosmosDbAccountCredential'\n    ) as rows ",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "master",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}
