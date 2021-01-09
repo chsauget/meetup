@@ -5,17 +5,29 @@
 		"workspaceName": {
 			"value": "playgroundeu"
 		},
-		"playgroundeu-WorkspaceDefaultSqlServer_connectionString": {
-			"value": ""
-		},
 		"SQL_Local_connectionString": {
 			"value": ""
 		},
-		"playgroundeu-WorkspaceDefaultStorage_properties_typeProperties_url": {
-			"value": "https://synapseplaygroundeu.dfs.core.windows.net"
+		"playgroundeu-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
 		},
 		"AKV_Playground_properties_typeProperties_baseUrl": {
 			"value": "https://PlayGroundKV01.vault.azure.net/"
+		},
+		"AzureMLService_properties_typeProperties_subscriptionId": {
+			"value": "c24ef419-76bf-4265-bb0d-e3e3f3086be2"
+		},
+		"AzureMLService_properties_typeProperties_resourceGroupName": {
+			"value": "PlayGround"
+		},
+		"AzureMLService_properties_typeProperties_servicePrincipalId": {
+			"value": "324e05a7-7f8c-4977-bea4-96e8811728d2"
+		},
+		"AzureMLService_properties_typeProperties_tenant": {
+			"value": "64a0dfc9-1e82-4c35-9f52-0505e4915ff6"
+		},
+		"playgroundeu-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://synapseplaygroundeu.dfs.core.windows.net"
 		}
 	}
 }
