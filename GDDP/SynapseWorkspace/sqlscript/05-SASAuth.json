@@ -1,0 +1,19 @@
+{
+	"name": "05-SASAuth",
+	"properties": {
+		"folder": {
+			"name": "ServerlessPool"
+		},
+		"content": {
+			"query": "CREATE MASTER KEY\nGO\n\n--DROP DATABASE SCOPED CREDENTIAL [SasToken_staplaygroundlogs]\nCREATE DATABASE SCOPED CREDENTIAL [SasToken_staplaygroundlogs]\nWITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'sv=2019-12-12&ss=b&srt=sco&sp=rlacx&se=2022-01-11T06:17:52Z&st=2021-01-10T22:17:52Z&spr=https&sig=tKAiG%2Bap6%2FadTOb6gVsQrK8ihOrKkG1qdulwl1NL3NI%3D'\nGO\n\n--DROP EXTERNAL DATA SOURCE [staplaygroundlogs]\nCREATE EXTERNAL DATA SOURCE [staplaygroundlogs]\nWITH (\n    LOCATION    = N'https://staplaygroundlogs.blob.core.windows.net/'\n    ,CREDENTIAL = [SasToken_staplaygroundlogs]\n)\nGO\n\n\nSELECT TOP 5 jsonContent\nFROM OPENROWSET(\n        -- BULK 'https://staplaygroundlogs.blob.core.windows.net/insights-logs-pipelineruns/resourceId=/SUBSCRIPTIONS/*/RESOURCEGROUPS/*/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/*/y=*/m=*/d=*/h=*/m=*/*.json'\n        BULK 'insights-logs-pipelineruns/resourceId=/SUBSCRIPTIONS/*/RESOURCEGROUPS/*/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/*/y=*/m=*/d=*/h=*/m=*/*.json'\n        , DATA_SOURCE = 'staplaygroundlogs'\n        , FORMAT = 'CSV'\n        , FIELDTERMINATOR = '0x0b'\n        , FIELDQUOTE = '0x0b'\n    ) WITH (\n        jsonContent VARCHAR(max)\n    ) AS [r]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "ServerlessPool",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

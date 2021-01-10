@@ -1,0 +1,19 @@
+{
+	"name": "01-Init",
+	"properties": {
+		"folder": {
+			"name": "ServerlessPool"
+		},
+		"content": {
+			"query": "-- Database creation\n--CREATE DATABASE ServerlessPool COLLATE Latin1_General_100_CI_AS_SC_UTF8\n--GO\n\n\n-- How to use OPENROWSET with SQL on-demand\n-- https://docs.microsoft.com/fr-fr/azure/synapse-analytics/sql/develop-openrowset\nSELECT TOP 5 jsonContent\nFROM OPENROWSET(\n        BULK 'https://staplaygroundlogs.blob.core.windows.net/insights-logs-pipelineruns/resourceId=/SUBSCRIPTIONS/*/RESOURCEGROUPS/*/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/*/y=*/m=*/d=*/h=*/m=*/*.json'\n        , FORMAT = 'CSV'\n        , FIELDTERMINATOR = '0x0b'\n        , FIELDQUOTE = '0x0b'\n    ) WITH (\n        jsonContent VARCHAR(max)\n    ) AS [r]\n\n-- Extract wildcard string from filepath\n-- Use as filter condition in WHERE clause\nSELECT TOP 5 jsonContent\nFROM OPENROWSET(\n        BULK 'https://staplaygroundlogs.blob.core.windows.net/insights-logs-pipelineruns/resourceId=/SUBSCRIPTIONS/*/RESOURCEGROUPS/*/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/*/y=*/m=*/d=*/h=*/m=*/*.json'\n        , FORMAT = 'CSV'\n        , FIELDTERMINATOR = '0x0b'\n        , FIELDQUOTE = '0x0b'\n    ) WITH (\n        jsonContent VARCHAR(max)\n    ) AS [r]\nWHERE\n    r.filepath(4) = 2021\n    AND r.filepath(5) = 01\n\nSELECT TOP 5 \n    [FilePath] = [r].filepath()\n    ,[FileName] = [r].filename()\n    ,[SubscriptionId] = CAST([r].filepath(1) AS VARCHAR(36))\n\t,[ResourceGroup] = CAST([r].filepath(2) AS VARCHAR(100))\n\t,[FactoryName] = CAST([r].filepath(3) AS VARCHAR(100))\n\t,[Year] = CAST([r].filepath(4) AS VARCHAR(4))\n\t,[Month] = CAST([r].filepath(5) AS VARCHAR(2))\n\t,[Day] = CAST([r].filepath(6) AS VARCHAR(2))\n\t,[Hour] = CAST([r].filepath(7) AS VARCHAR(2))\n    ,jsonContent\nFROM OPENROWSET(\n        BULK 'https://staplaygroundlogs.blob.core.windows.net/insights-logs-pipelineruns/resourceId=/SUBSCRIPTIONS/*/RESOURCEGROUPS/*/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/*/y=*/m=*/d=*/h=*/m=*/*.json'\n        , FORMAT = 'CSV'\n        , FIELDTERMINATOR = '0x0b'\n        , FIELDQUOTE = '0x0b'\n    ) WITH (\n        jsonContent VARCHAR(max)\n    ) AS [r]\nWHERE\n    r.filepath(4) = 2021\n    AND r.filepath(5) = 01\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "master",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}
