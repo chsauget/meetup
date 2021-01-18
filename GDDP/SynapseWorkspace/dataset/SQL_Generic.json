@@ -3,13 +3,22 @@
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "SQL_Local",
-			"type": "LinkedServiceReference"
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"Database": {
+					"value": "@dataset().database",
+					"type": "Expression"
+				}
+			}
 		},
 		"parameters": {
 			"schema": {
 				"type": "string"
 			},
 			"table": {
+				"type": "string"
+			},
+			"database": {
 				"type": "string"
 			}
 		},
