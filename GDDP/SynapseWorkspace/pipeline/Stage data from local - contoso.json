@@ -33,7 +33,7 @@
 								"value": "\"\"",
 								"type": "Expression"
 							},
-							"database": "AdventureWorksDW2019"
+							"database": "ContosoRetailDW"
 						}
 					},
 					"firstRowOnly": false
@@ -102,7 +102,7 @@
 											"value": "@item().Table",
 											"type": "Expression"
 										},
-										"database": "AdventureWorksDW2019"
+										"database": "ContosoRetailDW"
 									}
 								}
 							],
