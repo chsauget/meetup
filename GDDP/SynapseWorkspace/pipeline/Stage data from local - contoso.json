@@ -1,0 +1,129 @@
+{
+	"name": "Stage data from local - contoso",
+	"properties": {
+		"activities": [
+			{
+				"name": "LKP - Tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:30:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT [Schema] = S.name \n,[Table] = T.name\nFROM sys.tables T\n\tINNER JOIN sys.schemas S\n\tON T.schema_id = S.schema_id",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SQL_Generic",
+						"type": "DatasetReference",
+						"parameters": {
+							"schema": {
+								"value": "\"\"",
+								"type": "Expression"
+							},
+							"table": {
+								"value": "\"\"",
+								"type": "Expression"
+							},
+							"database": "AdventureWorksDW2019"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FELC - Tables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LKP - Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LKP - Tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy - Local tables to Azure file",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "SqlPoolSink",
+									"tableOption": "autoCreate"
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "SQL_Generic",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema": {
+											"value": "@item().Schema",
+											"type": "Expression"
+										},
+										"table": {
+											"value": "@item().Table",
+											"type": "Expression"
+										},
+										"database": "AdventureWorksDW2019"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SYNDWH_Generic",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema": "contoso",
+										"table": {
+											"value": "@item().Table",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": []
+	}
+}
