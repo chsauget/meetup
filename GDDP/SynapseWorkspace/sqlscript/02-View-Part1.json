@@ -1,0 +1,19 @@
+{
+	"name": "02-View-Part1",
+	"properties": {
+		"folder": {
+			"name": "ServerlessPool"
+		},
+		"content": {
+			"query": "--USE [ServerlessPool]\n--GO\n\nCREATE OR ALTER VIEW [dbo].[PipelineLogs] AS\nSELECT\n    [SubscriptionId] = CAST([r].filepath(1) AS VARCHAR(36))\n\t,[ResourceGroup] = CAST([r].filepath(2) AS VARCHAR(100))\n\t,[FactoryName] = CAST([r].filepath(3) AS VARCHAR(100))\n\t,[Year] = CAST([r].filepath(4) AS VARCHAR(4))\n\t,[Month] = CAST([r].filepath(5) AS VARCHAR(2))\n\t,[Day] = CAST([r].filepath(6) AS VARCHAR(2))\n\t,[Hour] = CAST([r].filepath(7) AS VARCHAR(2))\n    ,[PipelineRunId] = CAST(JSON_VALUE(jsonContent, '$.runId') AS VARCHAR(100))\n    ,[PipelineName] = CAST(JSON_VALUE(jsonContent, '$.pipelineName') AS VARCHAR(100))\n    ,[Time] = TRY_CAST(JSON_VALUE(jsonContent, '$.time') AS DATETIME2(3))\n    ,[Start] = TRY_CAST(JSON_VALUE(jsonContent, '$.start') AS DATETIME2(0))\n    ,[End] = NULLIF(TRY_CAST(JSON_VALUE(jsonContent, '$.end') AS DATETIME2(0)),'1601-01-01 00:00:00.0000000') \n    ,[Status] = CAST(JSON_VALUE(jsonContent, '$.status') AS VARCHAR(100))\n    ,[ErrorMessage] = CAST(NULLIF(JSON_VALUE(JSON_QUERY(jsonContent,'$.properties'), '$.Message'),'') AS VARCHAR(500))\n    ,[PredecessorPipelineName] = CAST(JSON_VALUE(Predecessors.value,'$.PipelineName') AS VARCHAR(100))\n    ,[PredecessorPipelineRunId] = CAST(JSON_VALUE(Predecessors.value,'$.PipelineRunId') AS VARCHAR(100))\n    ,[InvokedByType] = CAST(JSON_VALUE(Predecessors.value,'$.InvokedByType') AS VARCHAR(100))\n\t,[EnvironmentName] = CAST(JSON_VALUE(JSON_VALUE(jsonContent, '$.tags'),'$.Environment') AS VARCHAR(100))\n    --,jsonContent\nFROM OPENROWSET(\n        BULK 'https://staplaygroundlogs.blob.core.windows.net/insights-logs-pipelineruns/resourceId=/SUBSCRIPTIONS/*/RESOURCEGROUPS/*/PROVIDERS/MICROSOFT.DATAFACTORY/FACTORIES/*/y=*/m=*/d=*/h=*/m=*/*.json'\n        , FORMAT = 'CSV'\n        , FIELDTERMINATOR = '0x0b'\n        , FIELDQUOTE = '0x0b'\n    ) WITH (\n        jsonContent VARCHAR(max)\n    ) AS [r]\n    CROSS APPLY OPENJSON(JSON_QUERY(jsonContent, '$.properties.Predecessors')) AS Predecessors\nGO\n\nSELECT *\nFROM dbo.PipelineLogs p\nWHERE CONCAT(p.[Year],p.[Month],p.[Day]) BETWEEN CONVERT(varchar(8),DATEADD(dd,-1,GETDATE()),112) AND CONVERT(varchar(8),GETDATE(),112)\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "ServerlessPool",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"name": "06-Metrics",
+	"properties": {
+		"folder": {
+			"name": "ServerlessPool"
+		},
+		"content": {
+			"query": "CREATE OR ALTER VIEW [dbo].[MetricsSql] AS \nwith GetDataFromStorage AS (\n\tSELECT \n\t\tCAST([r].filepath(1) AS VARCHAR(36)) AS [SubscriptionId]\n\t\t,CAST([r].filepath(2) AS VARCHAR(100))  AS [ResourceGroup]\n\t\t,CAST([r].filepath(3) AS VARCHAR(100))  AS [ServerName]\n\t\t,CAST([r].filepath(4) AS VARCHAR(100))  AS [DatabaseName]\n\t\t,CAST([r].filepath(5) AS VARCHAR(4))  AS [Year]\n\t\t,CAST([r].filepath(6) AS VARCHAR(2))  AS [Month]\n\t\t,CAST([r].filepath(7) AS VARCHAR(2))  AS [Day]\n\t\t,CAST([r].filepath(8) AS VARCHAR(2))  AS [Hour]\n\t\t,UPPER(CAST(JSON_VALUE(jsonContent, '$.resourceId') AS VARCHAR(500))) AS [ResourceId]\n\t\t,CAST(JSON_VALUE(jsonContent, '$.time') AS DATETIME2(0)) AS [Timestamp]\n\t\t,CAST(JSON_VALUE(jsonContent, '$.metricName') AS VARCHAR(100)) AS [MetricName]\n\t\t,CAST(JSON_VALUE(jsonContent, '$.count') AS INT) AS [Count]\n\t\t,CAST(JSON_VALUE(jsonContent, '$.total') AS FLOAT(53)) AS [Sum]\n\t\t,CAST(JSON_VALUE(jsonContent, '$.minimum') AS FLOAT(53)) AS [Min]\n\t\t,CAST(JSON_VALUE(jsonContent, '$.maximum') AS FLOAT(53)) AS [Max]\n\t\t,CAST(JSON_VALUE(jsonContent, '$.average') AS FLOAT(53)) AS [Avg]\n\tFROM\n\tOPENROWSET(\n\t\tBULK 'https://staplaygroundlogs.blob.core.windows.net/insights-metrics-pt1m/resourceId=/SUBSCRIPTIONS/*/RESOURCEGROUPS/*/PROVIDERS/MICROSOFT.SQL/SERVERS/*/DATABASES/*/y=*/m=*/d=*/h=*/m=00/PT1H.json',\n\t\tFORMAT='CSV',\n\t\tFIELDTERMINATOR ='0x0b',\n\t\tFIELDQUOTE = '0x0b'\n\t)WITH (\n\t\tjsonContent varchar(max)\n\t) AS [r]\n)\nSELECT\n\t[ResourceId]\n\t,[SubscriptionId]\n    ,[ResourceGroup]\n    ,[ServerName]\n    ,[DatabaseName]\n    ,[Year]\n    ,[Month]\n    ,[Day]\n    ,[Hour]\n    ,CONVERT(datetime, CONCAT([Year],'-',[Month],'-',[Day],' ',[Hour],':00:00'), 120) [Timestamp]\n\t,CONVERT(datetime, SWITCHOFFSET(CONVERT(datetime, CONCAT([Year],'-',[Month],'-',[Day],' ',[Hour],':00:00'), 120), DATEPART(TZOFFSET, CONVERT(datetime, CONCAT([Year],'-',[Month],'-',[Day],' ',[Hour],':00:00'), 120) AT TIME ZONE 'Central European Standard Time'))) [Timestamp_Local]\n    ,[MetricName]\n    ,SUM([Count]) [Count]\n    ,SUM([Sum]) [Sum]\n    ,MIN([Min]) [Min]\n    ,MAX([Max]) [Max]\nFROM GetDataFromStorage\nWHERE\n\t--CONVERT(date, CONCAT([Year],'-',[Month],'-',[Day]), 120) BETWEEN CAST(DATEADD(dd, -2, GETDATE()) as date) AND CAST(GETDATE() as date)\n\tCONVERT(date, CONCAT([Year],[Month],[Day]), 112) = CAST(GETDATE() as date)\n\tAND MetricName IN ('dtu_limit', 'dtu_used', 'cpu_limit', 'cpu_used', 'dwu_limit', 'dwu_used', 'storage', 'allocated_data_storage', 'physical_data_read_percent', 'log_write_percent', 'active_queries', 'cpu_percent')\n\t--AND 1 = 2\nGROUP BY \n\t[ResourceId]\n\t,[SubscriptionId]\n    ,[ResourceGroup]\n    ,[ServerName]\n    ,[DatabaseName]\n    ,[Year]\n    ,[Month]\n    ,[Day]\n    ,[Hour]\n    ,[MetricName]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "ServerlessPool",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"name": "Sample failed pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "WEB - Unknown endpoint",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "http://error",
+					"method": "GET"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-01-10T23:00:42Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,19 @@
+{
+	"name": "Misc",
+	"properties": {
+		"folder": {
+			"name": "ServerlessPool"
+		},
+		"content": {
+			"query": "-- Schema inference\nSELECT\n    TOP 10 CommentCount\nFROM\n    OPENROWSET(\n        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/PartitionedByYear/Posts/year=2008/part-00000-4b95f289-41f7-4128-9808-c57fe7c75bd1.c000.snappy.parquet',\n        FORMAT='PARQUET'\n    ) AS [result]\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"name": "master",
+				"type": "SqlOnDemand"
+			}
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"name": "EventTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Main",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/triggers/blobs/trigger",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/PlayGround/providers/Microsoft.Storage/storageAccounts/staplayground",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

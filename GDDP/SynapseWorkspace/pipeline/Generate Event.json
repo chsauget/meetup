@@ -1,0 +1,87 @@
+{
+	"name": "Generate Event",
+	"properties": {
+		"activities": [
+			{
+				"name": "Generate Event trigger",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT 'GO' AS GO",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "GO",
+									"type": "String",
+									"physicalType": "varchar"
+								},
+								"sink": {
+									"type": "String",
+									"physicalType": "String",
+									"ordinal": 1
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SQLDB_AdventureWorks",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "BLOB_CSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": "triggers",
+							"FileName": {
+								"value": "@concat('trigger-',utcnow('yyyy-MM-ddThh-mm-ss'))",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"folder": {
+			"name": "Tools"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-01-10T18:36:30Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

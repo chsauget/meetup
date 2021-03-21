@@ -1,0 +1,34 @@
+{
+	"name": "SQLDB_AdventureWorks_Table",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB_AdventureWorks",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Schema": {
+				"type": "string"
+			},
+			"Table": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "SQL Database"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().Schema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().Table",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

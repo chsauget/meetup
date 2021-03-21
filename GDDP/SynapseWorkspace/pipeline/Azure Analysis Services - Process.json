@@ -1,0 +1,61 @@
+{
+	"name": "Azure Analysis Services - Process",
+	"properties": {
+		"activities": [
+			{
+				"name": "WAIT - Placeholder",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": {
+						"value": "@add(int(utcnow('mm')),30)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"SubscriptionId": {
+				"type": "string",
+				"defaultValue": "c24ef419-76bf-4265-bb0d-e3e3f3086be2"
+			},
+			"ResourceGroup": {
+				"type": "string",
+				"defaultValue": "PlayGround"
+			},
+			"ServerName": {
+				"type": "string",
+				"defaultValue": "playgroundeu"
+			},
+			"DatabaseName": {
+				"type": "string",
+				"defaultValue": "SQLDW"
+			},
+			"TMSLProcess": {
+				"type": "string",
+				"defaultValue": {
+					"type": "string",
+					"defaultValue": {
+						"type": "full",
+						"objects": []
+					}
+				}
+			}
+		},
+		"variables": {
+			"PauseResumeApiUrl": {
+				"type": "String"
+			},
+			"CheckStatusApiUrl": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Tools"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-01-10T18:44:00Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

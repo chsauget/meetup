@@ -1,0 +1,234 @@
+{
+	"name": "Azure Synapse Analytics - Pause and Resume",
+	"properties": {
+		"activities": [
+			{
+				"name": "WEB - Check current SQL pool state",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "VAR - Set Check status API URL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:10:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@variables('CheckStatusApiUrl')",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com"
+					}
+				}
+			},
+			{
+				"name": "IF - Pause or Resume operation needed",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "WEB - Check current SQL pool state",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(\n\tand(\n\t\tequals(activity('WEB - Check current SQL pool state').output.properties.status,'Paused')\n\t\t,equals(pipeline().parameters.Action, 'Resume')\n\t)\n\t,and(\n\t\tequals(activity('WEB - Check current SQL pool state').output.properties.status,'Online')\n\t\t,equals(pipeline().parameters.Action, 'Pause')\n\t)\n)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "VAR - Set Pause-Resume API URL",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "PauseResumeApiUrl",
+								"value": {
+									"value": "@concat(\n\t'https://management.azure.com/subscriptions/'\n\t, pipeline().parameters.SubscriptionId\n\t,'/resourceGroups/'\n\t, pipeline().parameters.ResourceGroup\n\t,'/providers/Microsoft.Sql/servers/'\n\t, pipeline().parameters.ServerName\n\t,'/databases/'\n\t, pipeline().parameters.DatabaseName\n\t,'/'\n\t,pipeline().parameters.Action\n\t,'?api-version=2018-06-01-preview'\n)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "WEB - Pause or Resume SQL pool",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "VAR - Set Pause-Resume API URL",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.01:00:00",
+								"retry": 10,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@variables('PauseResumeApiUrl')",
+									"type": "Expression"
+								},
+								"method": "POST",
+								"body": {
+									"value": "string('{}')",
+									"type": "Expression"
+								},
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://management.azure.com"
+								}
+							}
+						},
+						{
+							"name": "Wait 2 minutes",
+							"type": "Wait",
+							"dependsOn": [
+								{
+									"activity": "WEB - Pause or Resume SQL pool",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 120
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "UNTIL - Expected status",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "IF - Pause or Resume operation needed",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@if(\n\tequals(pipeline().parameters.Action, 'Resume')\n\t,equals(activity('WEB - Check SQL pool state').output.properties.status,'Online')\n\t,equals(activity('WEB - Check SQL pool state').output.properties.status,'Paused')\n)",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "WEB - Check SQL pool state",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Wait 10 Seconds",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:10:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@variables('CheckStatusApiUrl')",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://management.azure.com"
+								}
+							}
+						},
+						{
+							"name": "Wait 10 Seconds",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 10
+							}
+						}
+					],
+					"timeout": "0.00:30:00"
+				}
+			},
+			{
+				"name": "VAR - Set Check status API URL",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "CheckStatusApiUrl",
+					"value": {
+						"value": "@concat(\n\t'https://management.azure.com/subscriptions/'\n\t, pipeline().parameters.SubscriptionId\n\t,'/resourceGroups/'\n\t, pipeline().parameters.ResourceGroup\n\t,'/providers/Microsoft.Sql/servers/'\n\t, pipeline().parameters.ServerName\n\t,'/databases/'\n\t, pipeline().parameters.DatabaseName\n\t,'?api-version=2018-06-01-preview'\n)\n",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"SubscriptionId": {
+				"type": "string",
+				"defaultValue": "c24ef419-76bf-4265-bb0d-e3e3f3086be2"
+			},
+			"ResourceGroup": {
+				"type": "string",
+				"defaultValue": "PlayGround"
+			},
+			"ServerName": {
+				"type": "string",
+				"defaultValue": "playgroundeu"
+			},
+			"DatabaseName": {
+				"type": "string",
+				"defaultValue": "SQLDW"
+			},
+			"Action": {
+				"type": "string",
+				"defaultValue": "Resume"
+			}
+		},
+		"variables": {
+			"PauseResumeApiUrl": {
+				"type": "String"
+			},
+			"CheckStatusApiUrl": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Tools"
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-01-10T18:27:00Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

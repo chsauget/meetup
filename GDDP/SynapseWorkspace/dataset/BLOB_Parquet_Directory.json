@@ -1,0 +1,34 @@
+{
+	"name": "BLOB_Parquet_Directory",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BLOB_Playground",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Container": {
+				"type": "string"
+			},
+			"Directory": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Blob Storage"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": {
+					"value": "@dataset().Container",
+					"type": "Expression"
+				}
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

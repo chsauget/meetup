@@ -1,0 +1,33 @@
+{
+	"name": "SYNAPSE_DataSaturdayDW",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "playgroundeu-WorkspaceDefaultSqlServer",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"DBName": "DataSaturdayDW"
+			}
+		},
+		"parameters": {
+			"Schema": {
+				"type": "string"
+			},
+			"Table": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().Schema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().Table",
+				"type": "Expression"
+			}
+		}
+	}
+}

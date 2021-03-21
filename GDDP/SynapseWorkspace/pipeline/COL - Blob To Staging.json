@@ -1,0 +1,134 @@
+{
+	"name": "COL - Blob To Staging",
+	"properties": {
+		"activities": [
+			{
+				"name": "LOOK - Get Tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:05:00",
+					"retry": 2,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlDWSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SYNAPSE_DataSaturdayDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "admin",
+							"Table": "StagingManagement"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FOR - Import Tables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LOOK - Get Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LOOK - Get Tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "COPY - Blob to Staging",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:10:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "SqlDWSink",
+									"preCopyScript": {
+										"value": "IF OBJECT_ID('@{item().TargetSchema}.@{item().TargetTable}') IS NOT NULL\nDROP TABLE @{item().TargetSchema}.@{item().TargetTable}",
+										"type": "Expression"
+									},
+									"allowPolyBase": true,
+									"polyBaseSettings": {
+										"rejectValue": 0,
+										"rejectType": "value",
+										"useTypeDefault": true
+									},
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "BLOB_Parquet_File",
+									"type": "DatasetReference",
+									"parameters": {
+										"Container": "loadingfiles",
+										"Directory": "Sales",
+										"File": {
+											"value": "@item().SourceBlob",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SYNAPSE_DataSaturdayDW",
+									"type": "DatasetReference",
+									"parameters": {
+										"Schema": {
+											"value": "@item().TargetSchema",
+											"type": "Expression"
+										},
+										"Table": {
+											"value": "@item().TargetTable",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "01 - Collection"
+		},
+		"annotations": [
+			"Collection"
+		],
+		"lastPublishTime": "2021-01-10T20:26:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

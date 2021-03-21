@@ -1,0 +1,114 @@
+{
+	"name": "WRK - Dimensions",
+	"properties": {
+		"activities": [
+			{
+				"name": "LOOK - Get tables to load",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlDWSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SYNAPSE_DataSaturdayDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "admin",
+							"Table": "WorkManagement"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FOR - Load Dimensions",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "FILTER - Dimension tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('FILTER - Dimension tables').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "SP - Load Dimension",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:10:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": {
+									"value": "@{item().TargetSchema}.@{item().StoredProcedure}",
+									"type": "Expression"
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "playgroundeu-WorkspaceDefaultSqlServer",
+								"type": "LinkedServiceReference",
+								"parameters": {
+									"DBName": "DataSaturdayDW"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "FILTER - Dimension tables",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "LOOK - Get tables to load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LOOK - Get tables to load').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().LoadType, 'Dim')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "02 - Work"
+		},
+		"annotations": [
+			"Work"
+		],
+		"lastPublishTime": "2021-01-10T20:26:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
