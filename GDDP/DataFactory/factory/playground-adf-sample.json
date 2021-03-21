@@ -1,0 +1,9 @@
+{
+	"name": "playground-adf-sample",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "13f3527b-570c-481d-9bbb-e8e829a1975f",
+		"tenantId": "64a0dfc9-1e82-4c35-9f52-0505e4915ff6"
+	}
+}

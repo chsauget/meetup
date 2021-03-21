@@ -1,0 +1,48 @@
+{
+	"name": "WRK - Main",
+	"properties": {
+		"activities": [
+			{
+				"name": "WRK - Dimensions",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "WRK - Dimensions",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "WRK - Facts",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "WRK - Dimensions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "WRK - Facts",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"folder": {
+			"name": "02 - Work"
+		},
+		"annotations": [
+			"Work"
+		],
+		"lastPublishTime": "2021-01-10T20:26:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

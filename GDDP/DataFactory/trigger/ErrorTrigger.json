@@ -1,0 +1,25 @@
+{
+	"name": "ErrorTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Sample failed pipeline",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 30,
+				"startTime": "2021-01-10T23:01:00Z",
+				"endTime": "2021-01-13T23:15:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}

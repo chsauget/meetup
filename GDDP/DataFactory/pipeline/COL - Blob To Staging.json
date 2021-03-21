@@ -1,0 +1,140 @@
+{
+	"name": "COL - Blob To Staging",
+	"properties": {
+		"activities": [
+			{
+				"name": "LOOK - Get Tables",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT OBJECT_SCHEMA_NAME(object_id) [Schema], name [Table]\nFROM sys.tables\nWHERE OBJECT_SCHEMA_NAME(object_id) = 'SalesLT'",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SQLDB_AdventureWorks",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "FOR - Import Tables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "LOOK - Get Tables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LOOK - Get Tables').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 3,
+					"activities": [
+						{
+							"name": "COPY - Blob to Staging",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{'loadingfiles'}/@{'Sales'}/@{concat(item().Table,'.parquet')}"
+								},
+								{
+									"name": "Destination",
+									"value": "@{'staging'}.@{item().Table}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "@{concat('IF OBJECT_ID(''staging.',item().Table,''') IS NOT NULL\nDROP TABLE staging.',item().Table)}",
+										"type": "Expression"
+									},
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "BLOB_Parquet_File",
+									"type": "DatasetReference",
+									"parameters": {
+										"Container": "loadingfiles",
+										"Directory": "Sales",
+										"File": {
+											"value": "@concat(item().Table,'.parquet')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "SQLDB_AdventureWorks_Table",
+									"type": "DatasetReference",
+									"parameters": {
+										"Schema": "staging",
+										"Table": {
+											"value": "@item().Table",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "01 - Collection"
+		},
+		"annotations": [
+			"Collection"
+		],
+		"lastPublishTime": "2021-01-10T20:26:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

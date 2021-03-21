@@ -1,0 +1,36 @@
+{
+	"name": "HourlyTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Main",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 15,
+				"startTime": "2021-01-11T10:04:00Z",
+				"endTime": "2021-01-13T10:04:00Z",
+				"timeZone": "UTC",
+				"schedule": {
+					"minutes": [
+						30,
+						0
+					],
+					"hours": [
+						12,
+						13,
+						14
+					]
+				}
+			}
+		}
+	}
+}

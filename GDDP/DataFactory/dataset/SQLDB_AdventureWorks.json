@@ -1,0 +1,16 @@
+{
+	"name": "SQLDB_AdventureWorks",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLDB_AdventureWorks",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SQL Database"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
