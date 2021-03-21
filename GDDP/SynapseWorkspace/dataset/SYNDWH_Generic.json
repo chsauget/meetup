@@ -1,29 +1,16 @@
 {
-	"name": "SQL_Generic",
+	"name": "SYNDWH_Generic",
 	"properties": {
-		"linkedServiceName": {
-			"referenceName": "SQL_Local",
-			"type": "LinkedServiceReference",
-			"parameters": {
-				"Database": {
-					"value": "@dataset().database",
-					"type": "Expression"
-				}
-			}
-		},
 		"parameters": {
 			"schema": {
 				"type": "string"
 			},
 			"table": {
 				"type": "string"
-			},
-			"database": {
-				"type": "string"
 			}
 		},
 		"annotations": [],
-		"type": "SqlServerTable",
+		"type": "SqlPoolTable",
 		"schema": [],
 		"typeProperties": {
 			"schema": {
@@ -34,6 +21,10 @@
 				"value": "@dataset().table",
 				"type": "Expression"
 			}
+		},
+		"sqlPool": {
+			"referenceName": "SQLDW",
+			"type": "SqlPoolReference"
 		}
 	}
 }

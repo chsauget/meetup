@@ -2,10 +2,16 @@
 	"name": "SQL_Local",
 	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
+		"parameters": {
+			"Database": {
+				"type": "string",
+				"defaultValue": "StackOverflow"
+			}
+		},
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "Integrated Security=False;Data Source=DESKTOP-5U10OV1;Initial Catalog=StackOverflow;User ID=ADF",
+			"connectionString": "Integrated Security=False;Data Source=DESKTOP-5U10OV1;Initial Catalog=@{linkedService().Database};User ID=ADF",
 			"password": {
 				"type": "AzureKeyVaultSecret",
 				"store": {

@@ -1,5 +1,5 @@
 {
-	"name": "Stage data from local",
+	"name": "Stage data from local - contoso",
 	"properties": {
 		"activities": [
 			{
@@ -32,7 +32,8 @@
 							"table": {
 								"value": "\"\"",
 								"type": "Expression"
-							}
+							},
+							"database": "ContosoRetailDW"
 						}
 					},
 					"firstRowOnly": false
@@ -75,13 +76,8 @@
 									"partitionOption": "None"
 								},
 								"sink": {
-									"type": "ParquetSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
-									},
-									"formatSettings": {
-										"type": "ParquetWriteSettings"
-									}
+									"type": "SqlPoolSink",
+									"tableOption": "autoCreate"
 								},
 								"enableStaging": false,
 								"translator": {
@@ -105,14 +101,22 @@
 										"table": {
 											"value": "@item().Table",
 											"type": "Expression"
-										}
+										},
+										"database": "ContosoRetailDW"
 									}
 								}
 							],
 							"outputs": [
 								{
-									"referenceName": "Parquet_Generic",
-									"type": "DatasetReference"
+									"referenceName": "SYNDWH_Generic",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema": "contoso",
+										"table": {
+											"value": "@item().Table",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}

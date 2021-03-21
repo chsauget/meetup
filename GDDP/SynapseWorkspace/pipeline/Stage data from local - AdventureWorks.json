@@ -1,5 +1,5 @@
 {
-	"name": "Stage data from local",
+	"name": "Stage data from local - AdventureWorks",
 	"properties": {
 		"activities": [
 			{
@@ -32,7 +32,8 @@
 							"table": {
 								"value": "\"\"",
 								"type": "Expression"
-							}
+							},
+							"database": "AdventureWorksDW2019"
 						}
 					},
 					"firstRowOnly": false
@@ -105,14 +106,18 @@
 										"table": {
 											"value": "@item().Table",
 											"type": "Expression"
-										}
+										},
+										"database": "AdventureWorksDW2019"
 									}
 								}
 							],
 							"outputs": [
 								{
 									"referenceName": "Parquet_Generic",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"folder": "AdventureWorksDW"
+									}
 								}
 							]
 						}
