@@ -26,6 +26,10 @@
 						"value": "@variables('CheckStatusApiUrl')",
 						"type": "Expression"
 					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
 					"method": "GET",
 					"authentication": {
 						"type": "MSI",
@@ -59,7 +63,7 @@
 							"typeProperties": {
 								"variableName": "PauseResumeApiUrl",
 								"value": {
-									"value": "@concat(\n\t'https://management.azure.com/subscriptions/'\n\t, pipeline().parameters.SubscriptionId\n\t,'/resourceGroups/'\n\t, pipeline().parameters.ResourceGroup\n\t,'/providers/Microsoft.Sql/servers/'\n\t, pipeline().parameters.ServerName\n\t,'/databases/'\n\t, pipeline().parameters.DatabaseName\n\t,'/'\n\t,pipeline().parameters.Action\n\t,'?api-version=2018-06-01-preview'\n)",
+									"value": "@concat(\n\t'https://management.azure.com/subscriptions/'\n\t, pipeline().parameters.SubscriptionId\n\t,'/resourceGroups/'\n\t, pipeline().parameters.ResourceGroup\n\t,'/providers/Microsoft.Synapse/workspaces/'\n\t, pipeline().parameters.ServerName\n\t,'/sqlPools/'\n\t, pipeline().parameters.DatabaseName\n\t,'/'\n\t,pipeline().parameters.Action\n\t,'?api-version=2019-06-01-preview'\n)",
 									"type": "Expression"
 								}
 							}
@@ -188,7 +192,7 @@
 				"typeProperties": {
 					"variableName": "CheckStatusApiUrl",
 					"value": {
-						"value": "@concat(\n\t'https://management.azure.com/subscriptions/'\n\t, pipeline().parameters.SubscriptionId\n\t,'/resourceGroups/'\n\t, pipeline().parameters.ResourceGroup\n\t,'/providers/Microsoft.Sql/servers/'\n\t, pipeline().parameters.ServerName\n\t,'/databases/'\n\t, pipeline().parameters.DatabaseName\n\t,'?api-version=2018-06-01-preview'\n)\n",
+						"value": "@concat(\n\t'https://management.azure.com/subscriptions/'\n\t, pipeline().parameters.SubscriptionId\n\t,'/resourceGroups/'\n\t, pipeline().parameters.ResourceGroup\n\t,'/providers/Microsoft.Synapse/workspaces/'\n\t, pipeline().parameters.ServerName\n\t,'/sqlPools/'\n\t, pipeline().parameters.DatabaseName\n\t,'?api-version=2019-06-01-preview'\n)\n",
 						"type": "Expression"
 					}
 				}
