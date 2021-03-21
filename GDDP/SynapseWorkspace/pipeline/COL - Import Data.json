@@ -48,7 +48,10 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "inputsfiles",
-							"Directory": "Sales"
+							"Directory": {
+								"value": "@pipeline().parameters.Domain",
+								"type": "Expression"
+							}
 						}
 					}
 				],
@@ -58,7 +61,10 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "loadingfiles",
-							"Directory": "Sales"
+							"Directory": {
+								"value": "@pipeline().parameters.Domain",
+								"type": "Expression"
+							}
 						}
 					}
 				]
