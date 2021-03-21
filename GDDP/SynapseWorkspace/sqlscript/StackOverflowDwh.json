@@ -1,6 +1,9 @@
 {
 	"name": "StackOverflowDwh",
 	"properties": {
+		"folder": {
+			"name": "Meetup"
+		},
 		"content": {
 			"query": "--Create DW StackOverflow\n\nCREATE DATABASE StackOverflowDW COLLATE Latin1_General_100_CI_AS_SC_UTF8\nCREATE SCHEMA dwh\n\nALTER VIEW dwh.FactPosts AS \n\nSELECT\n        [PostId] = [Id]\n      ,[AcceptedAnswerId]\n      ,[AnswerCount]\n      ,[ClosedDate]\n      ,[CommentCount]\n      ,[CommunityOwnedDate]\n      ,[CreationDate]\n      ,[FavoriteCount]\n      ,[LastActivityDate]\n      ,[LastEditDate]\n      ,[LastEditorUserId]\n      ,[OwnerUserId]\n      ,[PostTypeId]\n      ,[Score]\n      ,[ViewCount]\nFROM\n    OPENROWSET(\n        BULK 'https://synapseplaygroundeu.dfs.core.windows.net/lake/StackOverflow/PartitionedByYearMonth/Posts/year=*/month=*/*.parquet',\n        FORMAT='PARQUET'\n    ) AS [result]\nWHERE PostTypeId = 1\n",
 			"metadata": {
