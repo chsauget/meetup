@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "LOOK - Get Dimensions",
+				"name": "LOOK - Get tables to load",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -16,14 +16,17 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT '1'",
+						"type": "SqlDWSource",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "SQLDB_AdventureWorks",
-						"type": "DatasetReference"
+						"referenceName": "SYNAPSE_DataSaturdayDW",
+						"type": "DatasetReference",
+						"parameters": {
+							"Schema": "admin",
+							"Table": "WorkManagement"
+						}
 					},
 					"firstRowOnly": false
 				}
@@ -33,7 +36,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "LOOK - Get Dimensions",
+						"activity": "FILTER - Dimension tables",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -42,7 +45,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@createArray('1','1','1','1','1','1','1','1','1','1')",
+						"value": "@activity('FILTER - Dimension tables').output.value",
 						"type": "Expression"
 					},
 					"activities": [
@@ -51,22 +54,51 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [],
 							"policy": {
-								"timeout": "7.00:00:00",
-								"retry": 0,
+								"timeout": "0.00:10:00",
+								"retry": 1,
 								"retryIntervalInSeconds": 30,
 								"secureOutput": false,
 								"secureInput": false
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[SampleSP]"
+								"storedProcedureName": {
+									"value": "@{item().TargetSchema}.@{item().StoredProcedure}",
+									"type": "Expression"
+								}
 							},
 							"linkedServiceName": {
-								"referenceName": "SQLDB_AdventureWorks",
-								"type": "LinkedServiceReference"
+								"referenceName": "playgroundeu-WorkspaceDefaultSqlServer",
+								"type": "LinkedServiceReference",
+								"parameters": {
+									"DBName": "DataSaturdayDW"
+								}
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "FILTER - Dimension tables",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "LOOK - Get tables to load",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('LOOK - Get tables to load').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().LoadType, 'Dim')",
+						"type": "Expression"
+					}
 				}
 			}
 		],
