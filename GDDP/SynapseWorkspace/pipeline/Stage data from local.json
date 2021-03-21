@@ -120,6 +120,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Meetup"
+		},
 		"annotations": []
 	}
 }
