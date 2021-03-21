@@ -1,0 +1,82 @@
+{
+	"name": "COL - Import Data",
+	"properties": {
+		"activities": [
+			{
+				"name": "COPY - Prepare Data",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:05:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "@{'inputsfiles'}/@{'Sales'}/"
+					},
+					{
+						"name": "Destination",
+						"value": "@{'loadingfiles'}/@{'Sales'}/"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "BLOB_Directory",
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": "inputsfiles",
+							"Directory": "Sales"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "BLOB_Directory",
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": "loadingfiles",
+							"Directory": "Sales"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"Domain": {
+				"type": "string",
+				"defaultValue": "Sales"
+			}
+		},
+		"folder": {
+			"name": "01 - Collection"
+		},
+		"annotations": [
+			"Collection"
+		],
+		"lastPublishTime": "2021-01-10T20:26:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
