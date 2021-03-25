@@ -13,7 +13,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "ADLS_Parquet",
+						"referenceName": "ADLS_Parquet_OrderDetails",
 						"type": "DatasetReference"
 					},
 					"name": "SrcSalesOrderDetail"
@@ -23,9 +23,13 @@
 			"transformations": [
 				{
 					"name": "JoinSalesOrderDetails"
+				},
+				{
+					"name": "MapDrifted1",
+					"description": "Creates an explicit mapping for each drifted column"
 				}
 			],
-			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['Sales/SalesOrderHeader.parquet']) ~> SrcSalesOrderHeader\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['Sales/SalesOrderDetail.parquet']) ~> SrcSalesOrderDetail\nSrcSalesOrderHeader, SrcSalesOrderDetail join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> JoinSalesOrderDetails"
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['Sales/SalesOrderHeader.parquet']) ~> SrcSalesOrderHeader\nsource(output(\n\t\tSalesOrderID as integer,\n\t\tSalesOrderDetailID as integer,\n\t\tOrderQty as integer,\n\t\tProductID as integer,\n\t\tUnitPrice as decimal(19,4),\n\t\tUnitPriceDiscount as decimal(19,4),\n\t\tLineTotal as decimal(38,6),\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['Sales/SalesOrderDetail.parquet']) ~> SrcSalesOrderDetail\nSrcSalesOrderDetail, MapDrifted1 join(SrcSalesOrderDetail@SalesOrderID == MapDrifted1@SalesOrderID,\n\tjoinType:'inner',\n\tbroadcast: 'auto')~> JoinSalesOrderDetails\nSrcSalesOrderHeader derive(SalesOrderID = toInteger(byName('SalesOrderID')),\n\t\tRevisionNumber = toInteger(byName('RevisionNumber')),\n\t\tOrderDate = toTimestamp(byName('OrderDate')),\n\t\tDueDate = toTimestamp(byName('DueDate')),\n\t\tShipDate = toTimestamp(byName('ShipDate')),\n\t\tStatus = toInteger(byName('Status')),\n\t\tOnlineOrderFlag = toBoolean(byName('OnlineOrderFlag')),\n\t\tSalesOrderNumber = toString(byName('SalesOrderNumber')),\n\t\tPurchaseOrderNumber = toString(byName('PurchaseOrderNumber')),\n\t\tAccountNumber = toString(byName('AccountNumber')),\n\t\tCustomerID = toInteger(byName('CustomerID')),\n\t\tShipToAddressID = toInteger(byName('ShipToAddressID')),\n\t\tBillToAddressID = toInteger(byName('BillToAddressID')),\n\t\tShipMethod = toString(byName('ShipMethod')),\n\t\tCreditCardApprovalCode = toString(byName('CreditCardApprovalCode')),\n\t\tSubTotal = toDecimal(byName('SubTotal')),\n\t\tTaxAmt = toDecimal(byName('TaxAmt')),\n\t\tFreight = toDecimal(byName('Freight')),\n\t\tTotalDue = toDecimal(byName('TotalDue')),\n\t\tComment = toString(byName('Comment')),\n\t\trowguid = toString(byName('rowguid')),\n\t\tModifiedDate = toTimestamp(byName('ModifiedDate'))) ~> MapDrifted1"
 		}
 	}
 }

@@ -1,0 +1,19 @@
+{
+	"name": "ADLS_Parquet_OrderDetails",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "playgroundeu-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "inputsfiles"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
