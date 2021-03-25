@@ -1,0 +1,15 @@
+{
+	"name": "SYNAPSE_DataSaturday",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "playgroundeu-WorkspaceDefaultSqlServer",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"DBName": "DataSaturdayDW"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": []
+	}
+}
