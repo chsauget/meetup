@@ -79,11 +79,31 @@
 				}
 			},
 			{
-				"name": "Synapse Analytics - Pause",
+				"name": "Process Azure AS model",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
 						"activity": "WRK - Main",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Azure Analysis Services - Process",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Synapse Analytics - Pause",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Process Azure AS model",
 						"dependencyConditions": [
 							"Succeeded"
 						]
