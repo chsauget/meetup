@@ -3,18 +3,453 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "WAIT - Placeholder",
-				"type": "Wait",
-				"dependsOn": [],
+				"name": "WEB - Get details of a server",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "VAR - Set SSASRestAPIURL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:30:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"waitTimeInSeconds": {
-						"value": "@add(int(utcnow('mm')),30)",
+					"url": {
+						"value": "@concat(variables('SSASRestAPIURL')\n,pipeline().parameters.ApiVersion\n)",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.core.windows.net"
+					}
+				}
+			},
+			{
+				"name": "VAR - Set Server State",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "WEB - Get details of a server",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "ServerState",
+					"value": {
+						"value": "@activity('WEB - Get details of a server').output.properties.state",
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "VAR - Set SSASRestAPIURL",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SSASRestAPIURL",
+					"value": {
+						"value": "@concat('https://management.azure.com/subscriptions/'\n,pipeline().parameters.SubscriptionId\n,'/resourceGroups/'\n,pipeline().parameters.ResourceGroup\n,'/providers/Microsoft.AnalysisServices/servers/'\n,pipeline().parameters.ServerName)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "UNTIL - Server Online",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "IF - Server State is Paused",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(variables('ServerState'),'Succeeded')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "WEB - Get details of a server - Until",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "Wait - Server Resume",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:30:00",
+								"retry": 3,
+								"retryIntervalInSeconds": 60,
+								"secureOutput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@concat(variables('SSASRestAPIURL')\n,pipeline().parameters.ApiVersion\n)",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://management.core.windows.net"
+								}
+							}
+						},
+						{
+							"name": "VAR - Set Server State - Until",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "WEB - Get details of a server - Until",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "ServerState",
+								"value": {
+									"value": "@activity('WEB - Get details of a server - Until').output.properties.state",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Wait - Server Resume",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 10
+							}
+						}
+					],
+					"timeout": "0.00:30:00"
+				}
+			},
+			{
+				"name": "UNTIL - Process End",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "FILTER - Keep processing refresh",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@not(equals(activity('WEB - Get SSAS Process Status').output.status,'inProgress'))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "WEB - Get SSAS Process Status",
+							"type": "WebActivity",
+							"dependsOn": [
+								{
+									"activity": "WAIT - End of SSAS process",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.00:05:00",
+								"retry": 3,
+								"retryIntervalInSeconds": 60,
+								"secureOutput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@concat(variables('SSASProcessURL')\n,'/'\n,activity('FILTER - Keep processing refresh').output.Value[0].refreshId\n)",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://*.asazure.windows.net"
+								}
+							}
+						},
+						{
+							"name": "WAIT - End of SSAS process",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 90
+							}
+						}
+					],
+					"timeout": "0.02:30:00"
+				}
+			},
+			{
+				"name": "VAR - Set SSASProcessURL",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "UNTIL - Server Online",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "SSASProcessURL",
+					"value": {
+						"value": "@concat('https://'\n,pipeline().parameters.Region\n,'.asazure.windows.net/servers/'\n,pipeline().parameters.ServerName\n,'/models/'\n,pipeline().parameters.DatabaseName\n,'/refreshes'\n)",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "WEB - Start SSAS Process",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "VAR - Set SSASProcessURL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:05:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@variables('SSASProcessURL')",
+						"type": "Expression"
+					},
+					"method": "POST",
+					"body": {
+						"value": "@pipeline().parameters.TSMLProcess",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://*.asazure.windows.net"
+					}
+				}
+			},
+			{
+				"name": "FILTER - Keep processing refresh",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "WEB - Get Process Id",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@json(activity('WEB - Get Process Id').output.Response)",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@greaterOrEquals(item().startTime,addseconds(activity('WEB - Start SSAS Process').output.startTime,-30))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "WEB - Get Process Id",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "WEB - Start SSAS Process",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.00:03:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@variables('SSASProcessURL')",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://*.asazure.windows.net"
+					}
+				}
+			},
+			{
+				"name": "IF - Process Failed",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "UNTIL - Process End",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('WEB - Get SSAS Process Status').output.status,'failed')",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "WEB - Throw Error Message on Body",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "http://error",
+									"type": "Expression"
+								},
+								"method": "POST",
+								"body": {
+									"value": "@string(activity('WEB - Get SSAS Process Status').output)",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "IF - Server State is Paused",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "VAR - Set Server State",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(variables('ServerState'),'Paused')",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "WEB - Resume Analysis Services",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:30:00",
+								"retry": 3,
+								"retryIntervalInSeconds": 60,
+								"secureOutput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@concat(variables('SSASRestAPIURL')\n,'/resume'\n,pipeline().parameters.ApiVersion\n)",
+									"type": "Expression"
+								},
+								"method": "POST",
+								"body": "'{}'",
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://management.core.windows.net"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "IF - Server State was paused",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "IF - Process Failed",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('WEB - Get details of a server').output.properties.state,'Paused')",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "WEB - Pause Analysis Services",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.00:30:00",
+								"retry": 3,
+								"retryIntervalInSeconds": 60,
+								"secureOutput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@concat(variables('SSASRestAPIURL')\n,'/Suspend'\n,pipeline().parameters.ApiVersion\n)",
+									"type": "Expression"
+								},
+								"method": "POST",
+								"body": "'{}'",
+								"authentication": {
+									"type": "MSI",
+									"resource": "https://management.core.windows.net"
+								}
+							}
+						}
+					]
+				}
 			}
 		],
+		"concurrency": 1,
 		"parameters": {
 			"SubscriptionId": {
 				"type": "string",
@@ -24,38 +459,49 @@
 				"type": "string",
 				"defaultValue": "PlayGround"
 			},
+			"Region": {
+				"type": "string",
+				"defaultValue": "westeurope"
+			},
 			"ServerName": {
 				"type": "string",
-				"defaultValue": "playgroundeu"
+				"defaultValue": "aasserver"
+			},
+			"ApiVersion": {
+				"type": "string",
+				"defaultValue": "?api-version=2017-08-01"
+			},
+			"TSMLProcess": {
+				"type": "string",
+				"defaultValue": {
+					"type": "full"
+				}
 			},
 			"DatabaseName": {
 				"type": "string",
-				"defaultValue": "SQLDW"
-			},
-			"TMSLProcess": {
-				"type": "string",
-				"defaultValue": {
-					"type": "string",
-					"defaultValue": {
-						"type": "full",
-						"objects": []
-					}
-				}
+				"defaultValue": "PlayGround"
 			}
 		},
 		"variables": {
-			"PauseResumeApiUrl": {
+			"SSASRestAPIURL": {
 				"type": "String"
 			},
-			"CheckStatusApiUrl": {
+			"ServerCapacity": {
+				"type": "String"
+			},
+			"ServerState": {
+				"type": "String"
+			},
+			"QueryPoolSeparated": {
+				"type": "String"
+			},
+			"SSASProcessURL": {
 				"type": "String"
 			}
 		},
 		"folder": {
 			"name": "Tools"
 		},
-		"annotations": [],
-		"lastPublishTime": "2021-01-10T18:44:00Z"
-	},
-	"type": "Microsoft.DataFactory/factories/pipelines"
+		"annotations": []
+	}
 }
