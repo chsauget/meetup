@@ -3,34 +3,11 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "COL - Import Data",
-				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "Synapse Analytics - Resume",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"pipeline": {
-						"referenceName": "COL - Import Data",
-						"type": "PipelineReference"
-					},
-					"waitOnCompletion": true,
-					"parameters": {
-						"Domain": "Sales"
-					}
-				}
-			},
-			{
 				"name": "COL - Blob To Staging",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "COL - Import Data",
+						"activity": "Synapse Analytics - Resume",
 						"dependencyConditions": [
 							"Succeeded"
 						]
