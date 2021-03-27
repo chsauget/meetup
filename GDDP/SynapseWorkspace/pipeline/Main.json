@@ -77,6 +77,29 @@
 					},
 					"waitOnCompletion": true
 				}
+			},
+			{
+				"name": "Synapse Analytics - Pause",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "WRK - Main",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Azure Synapse Analytics - Pause and Resume",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Action": "Pause"
+					}
+				}
 			}
 		],
 		"annotations": [],
