@@ -7,7 +7,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Serverless Wakeup",
+						"activity": "Synapse Analytics - Resume",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -86,28 +86,16 @@
 				}
 			},
 			{
-				"name": "Serverless Wakeup",
-				"type": "Lookup",
+				"name": "Synapse Analytics - Resume",
+				"type": "ExecutePipeline",
 				"dependsOn": [],
-				"policy": {
-					"timeout": "0.00:02:00",
-					"retry": 2,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT 1",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
+					"pipeline": {
+						"referenceName": "Azure Synapse Analytics - Pause and Resume",
+						"type": "PipelineReference"
 					},
-					"dataset": {
-						"referenceName": "SQLDB_AdventureWorks",
-						"type": "DatasetReference"
-					}
+					"waitOnCompletion": true
 				}
 			}
 		],
