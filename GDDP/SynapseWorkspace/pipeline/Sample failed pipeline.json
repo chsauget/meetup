@@ -20,6 +20,9 @@
 				}
 			}
 		],
+		"folder": {
+			"name": "Meetup"
+		},
 		"annotations": [],
 		"lastPublishTime": "2021-01-10T23:00:42Z"
 	},
