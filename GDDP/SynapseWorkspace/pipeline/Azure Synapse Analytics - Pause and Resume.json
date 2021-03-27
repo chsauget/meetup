@@ -213,7 +213,7 @@
 			},
 			"DatabaseName": {
 				"type": "string",
-				"defaultValue": "SQLDW"
+				"defaultValue": "DataSaturdayDW"
 			},
 			"Action": {
 				"type": "string",
