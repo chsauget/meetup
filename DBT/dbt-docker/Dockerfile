@@ -69,6 +69,12 @@ RUN wget https://aka.ms/downloadazcopy-v10-linux \
 	  && rm -r ./azcopy_linux_amd64_* \
 	  && rm downloadazcopy-v10-linux
 
-CMD azcopy copy "${DBT_SAS}" "/usr/app/" --recursive=true ; dbt run --profiles-dir profiles
+##
+# api
+##
+RUN python -m pip install fastapi pydantic uvicorn --no-cache-dir
 
+	  
+CMD azcopy copy "${DBT_SAS}" "/usr/app/" --recursive=true ; uvicorn main:app --host 0.0.0.0 --port 80
+#CMD azcopy copy "${DBT_SAS}" "/usr/app/" --recursive=true ; dbt run --profiles-dir profiles
 #CMD ["az"]
