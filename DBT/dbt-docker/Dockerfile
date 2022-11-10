@@ -43,9 +43,9 @@ ENV LANG=C.UTF-8
 RUN python -m pip install --upgrade pip setuptools wheel --no-cache-dir
 
 # Set docker basics
-WORKDIR /usr/app/dbt/
+WORKDIR /usr/app/dbt-runner
 VOLUME /usr/app
-#ENTRYPOINT ["dbt"]
+
 
 ##
 # dbt-core
@@ -72,9 +72,9 @@ RUN wget https://aka.ms/downloadazcopy-v10-linux \
 ##
 # api
 ##
-RUN python -m pip install fastapi pydantic uvicorn --no-cache-dir
+RUN python -m pip install fastapi pydantic uvicorn azure.storage.blob --no-cache-dir
 
 	  
-CMD azcopy copy "${DBT_SAS}" "/usr/app/" --recursive=true ; uvicorn main:app --host 0.0.0.0 --port 80
+CMD azcopy copy "${DBT_SAS}" "/usr/app/" --recursive=true ; ls ; uvicorn main:app --host 0.0.0.0 --port 80
 #CMD azcopy copy "${DBT_SAS}" "/usr/app/" --recursive=true ; dbt run --profiles-dir profiles
 #CMD ["az"]
