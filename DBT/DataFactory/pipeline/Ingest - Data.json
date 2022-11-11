@@ -47,12 +47,12 @@
 					},
 					"activities": [
 						{
-							"name": "COPY - Data to ADLS",
+							"name": "COPY - Data to Databricks SQL",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
 								"timeout": "0.00:15:00",
-								"retry": 1,
+								"retry": 0,
 								"retryIntervalInSeconds": 30,
 								"secureOutput": false,
 								"secureInput": false
@@ -69,22 +69,22 @@
 									"partitionOption": "None"
 								},
 								"sink": {
-									"type": "ParquetSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
+									"type": "AzureDatabricksDeltaLakeSink",
+									"preCopyScript": {
+										"value": "TRUNCATE TABLE adventureworks.@{toLower(item().Table)}",
+										"type": "Expression"
 									},
-									"formatSettings": {
-										"type": "ParquetWriteSettings"
+									"importSettings": {
+										"type": "AzureDatabricksDeltaLakeImportCommand"
 									}
 								},
-								"enableStaging": false,
-								"translator": {
-									"type": "TabularTranslator",
-									"typeConversion": true,
-									"typeConversionSettings": {
-										"allowDataTruncation": true,
-										"treatBooleanAsNumber": false
-									}
+								"enableStaging": true,
+								"stagingSettings": {
+									"linkedServiceName": {
+										"referenceName": "ADLS_Demo_AK",
+										"type": "LinkedServiceReference"
+									},
+									"path": "data/temp"
 								}
 							},
 							"inputs": [
@@ -95,11 +95,12 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "ADLS_Parquet",
+									"referenceName": "DBKS_DeltaLakeTable",
 									"type": "DatasetReference",
 									"parameters": {
-										"Path": {
-											"value": "@{item().Schema}/@{item().Table}.parquet",
+										"Database": "adventureworks",
+										"Table": {
+											"value": "@toLower(item().Table)",
 											"type": "Expression"
 										}
 									}
