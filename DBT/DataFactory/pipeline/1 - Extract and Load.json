@@ -78,14 +78,7 @@
 										"type": "AzureDatabricksDeltaLakeImportCommand"
 									}
 								},
-								"enableStaging": true,
-								"stagingSettings": {
-									"linkedServiceName": {
-										"referenceName": "ADLS_Demo_AK",
-										"type": "LinkedServiceReference"
-									},
-									"path": "data/temp"
-								}
+								"enableStaging": true
 							},
 							"inputs": [
 								{
