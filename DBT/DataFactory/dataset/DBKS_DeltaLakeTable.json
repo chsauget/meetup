@@ -1,0 +1,31 @@
+{
+	"name": "DBKS_DeltaLakeTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DTBKS_Demo",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Database": {
+				"type": "string",
+				"defaultValue": "adventureworks"
+			},
+			"Table": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureDatabricksDeltaLakeDataset",
+		"typeProperties": {
+			"database": {
+				"value": "@dataset().Database",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().Table",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}

@@ -1,0 +1,10 @@
+{
+	"name": "ADLS_Demo",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://storagedbtdemo.dfs.core.windows.net/"
+		}
+	}
+}

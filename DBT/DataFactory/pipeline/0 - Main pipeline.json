@@ -1,0 +1,41 @@
+{
+	"name": "0 - Main pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Ingest - Data",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "1 - Extract and Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Work - dbt",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Ingest - Data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "2 - Transform with dbt",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	}
+}

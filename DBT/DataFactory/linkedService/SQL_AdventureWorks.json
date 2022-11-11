@@ -1,0 +1,10 @@
+{
+	"name": "SQL_AdventureWorks",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=dbt-demo.database.windows.net;Initial Catalog=adventureworks"
+		}
+	}
+}

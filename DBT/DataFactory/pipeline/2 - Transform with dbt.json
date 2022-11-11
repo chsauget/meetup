@@ -1,0 +1,81 @@
+{
+	"name": "2 - Transform with dbt",
+	"properties": {
+		"activities": [
+			{
+				"name": "WEB - Run dbt model on Container App",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "WEB - Get Storage SAS",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@{pipeline().globalParameters.ContainerAppBaseUrl}/dbt",
+						"type": "Expression"
+					},
+					"method": "POST",
+					"headers": {
+						"Content-Type": "application/json"
+					},
+					"body": {
+						"value": "@json(\n    concat(\n        '{\"account_url\":\"'\n        ,'https://'\n        ,pipeline().parameters.StorageAccountName\n        ,'.blob.core.windows.net/'\n        ,pipeline().parameters.ContainerName\n        ,activity('WEB - Get Storage SAS').output.value\n        ,'\", \"project_name\":\"'\n        ,pipeline().parameters.ProjectName\n        ,'\"}'\n    )\n)",
+						"type": "Expression"
+					},
+					"httpRequestTimeout": "00:10:00"
+				}
+			},
+			{
+				"name": "WEB - Get Storage SAS",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:05:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "@{pipeline().globalParameters.KeyVaultUrl}/secrets/StorageSASToken?api-version=7.0",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"ProjectName": {
+				"type": "string",
+				"defaultValue": "dbt"
+			},
+			"StorageAccountName": {
+				"type": "string",
+				"defaultValue": "storagedbtdemo"
+			},
+			"ContainerName": {
+				"type": "string",
+				"defaultValue": "dbt"
+			}
+		},
+		"annotations": []
+	}
+}

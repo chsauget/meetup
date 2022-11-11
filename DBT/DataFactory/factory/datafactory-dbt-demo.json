@@ -1,0 +1,16 @@
+{
+	"name": "datafactory-dbt-demo",
+	"properties": {
+		"globalParameters": {
+			"ContainerAppBaseUrl": {
+				"type": "string",
+				"value": "https://dbt--l03b927.calmground-c22380ff.northeurope.azurecontainerapps.io"
+			},
+			"KeyVaultUrl": {
+				"type": "string",
+				"value": "https://keyvault-dbt-demo.vault.azure.net/"
+			}
+		}
+	},
+	"location": "northeurope"
+}

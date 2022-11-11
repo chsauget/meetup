@@ -1,0 +1,129 @@
+version: 2
+
+sources:
+ - name: adventureworks
+   tables:
+    - name: address
+      columns: 
+      - name: AddressID
+      - name: AddressLine1
+      - name: AddressLine2
+      - name: City
+      - name: StateProvince
+      - name: CountryRegion
+      - name: PostalCode
+      - name: rowguid
+      - name: ModifiedDate
+
+    - name: customer
+      columns: 
+      - name: CustomerID
+      - name: NameStyle
+      - name: Title
+      - name: FirstName
+      - name: MiddleName
+      - name: LastName
+      - name: Suffix
+      - name: CompanyName
+      - name: SalesPerson
+      - name: EmailAddress
+      - name: Phone
+      - name: PasswordHash
+      - name: PasswordSalt
+      - name: rowguid
+      - name: ModifiedDate
+
+    - name: customeraddress
+      columns: 
+      - name: CustomerID
+      - name: AddressID
+      - name: AddressType
+      - name: rowguid
+      - name: ModifiedDate
+
+    - name: product
+      columns: 
+      - name: ProductID
+      - name: Name
+      - name: ProductNumber
+      - name: Color
+      - name: StandardCost
+      - name: ListPrice
+      - name: Size
+      - name: Weight
+      - name: ProductCategoryID
+      - name: ProductModelID
+      - name: SellStartDate
+      - name: SellEndDate
+      - name: DiscontinuedDate
+      - name: ThumbNailPhoto
+      - name: ThumbnailPhotoFileName
+      - name: rowguid
+      - name: ModifiedDate
+    
+    - name: productcategory
+      columns: 
+      - name: ProductCategoryID
+      - name: ParentProductCategoryID
+      - name: Name
+      - name: rowguid
+      - name: ModifiedDate
+
+    - name: productdescription
+      columns: 
+      - name: ProductDescriptionID
+      - name: Description
+      - name: rowguid
+      - name: ModifiedDate
+
+    - name: productmodel
+      columns: 
+      - name: ProductModelID
+      - name: Name
+      - name: rowguid
+      - name: ModifiedDate
+
+    - name: productmodelproductdescription
+      columns: 
+      - name: ProductModelID
+      - name: ProductDescriptionID
+      - name: Culture
+      - name: rowguid
+      - name: ModifiedDate
+
+    - name: salesorderdetail
+      columns: 
+      - name: SalesOrderID
+      - name: SalesOrderDetailID
+      - name: OrderQty
+      - name: ProductID
+      - name: UnitPrice
+      - name: UnitPriceDiscount
+      - name: LineTotal
+      - name: rowguid
+      - name: ModifiedDate
+
+    - name: salesorderheader
+      columns: 
+      - name: SalesOrderID
+      - name: RevisionNumber
+      - name: OrderDate
+      - name: DueDate
+      - name: ShipDate
+      - name: Status
+      - name: OnlineOrderFlag
+      - name: SalesOrderNumber
+      - name: PurchaseOrderNumber
+      - name: AccountNumber
+      - name: CustomerID
+      - name: ShipToAddressID
+      - name: BillToAddressID
+      - name: ShipMethod
+      - name: CreditCardApprovalCode
+      - name: SubTotal
+      - name: TaxAmt
+      - name: Freight
+      - name: TotalDue
+      - name: Comment
+      - name: rowguid
+      - name: ModifiedDate
