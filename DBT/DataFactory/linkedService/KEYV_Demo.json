@@ -1,0 +1,10 @@
+{
+	"name": "KEYV_Demo",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://keyvault-dbt-demo.vault.azure.net/"
+		}
+	}
+}
