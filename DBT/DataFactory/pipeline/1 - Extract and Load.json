@@ -1,5 +1,5 @@
 {
-	"name": "Ingest - Data",
+	"name": "1 - Extract and Load",
 	"properties": {
 		"activities": [
 			{
