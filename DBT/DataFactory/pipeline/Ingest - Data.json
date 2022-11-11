@@ -47,7 +47,7 @@
 					},
 					"activities": [
 						{
-							"name": "COPY - Data to Databricks SQL",
+							"name": "COPY - Data to Databricks",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
