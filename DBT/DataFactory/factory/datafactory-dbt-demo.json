@@ -9,6 +9,10 @@
 			"KeyVaultUrl": {
 				"type": "string",
 				"value": "https://keyvault-dbt-demo.vault.azure.net/"
+			},
+			"SubscriptionId": {
+				"type": "string",
+				"value": "3b2b5aa8-6f16-4433-aa07-deb341acfda4"
 			}
 		}
 	},
