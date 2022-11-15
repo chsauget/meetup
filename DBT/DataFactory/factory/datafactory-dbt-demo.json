@@ -17,6 +17,10 @@
 			"ResourceGroup": {
 				"type": "string",
 				"value": "dbt"
+			},
+			"ContainerAppName": {
+				"type": "string",
+				"value": "dbt"
 			}
 		}
 	},
