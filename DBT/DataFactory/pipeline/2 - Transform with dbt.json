@@ -11,6 +11,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "WEB - Get ContainerApp",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -60,6 +66,30 @@
 						"resource": "https://vault.azure.net"
 					}
 				}
+			},
+			{
+				"name": "WEB - Get ContainerApp",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:05:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": {
+						"value": "https://management.azure.com/subscriptions/@{pipeline().globalParameters.SubscriptionId}/resourceGroups/@{pipeline().globalParameters.ResourceGroup}/providers/Microsoft.App/containerApps/@{pipeline().globalParameters.ContainerAppName}?api-version=2022-03-01",
+						"type": "Expression"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://management.azure.com"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -74,6 +104,11 @@
 			"ContainerName": {
 				"type": "string",
 				"defaultValue": "dbt"
+			}
+		},
+		"variables": {
+			"ContainerAppBaseUrl": {
+				"type": "String"
 			}
 		},
 		"annotations": []
