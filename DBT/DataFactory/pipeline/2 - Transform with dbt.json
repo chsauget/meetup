@@ -29,7 +29,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": {
-						"value": "@{pipeline().globalParameters.ContainerAppBaseUrl}/dbt",
+						"value": "https://@{activity('WEB - Get ContainerApp').output.properties.configuration.ingress.fqdn}/dbt",
 						"type": "Expression"
 					},
 					"method": "POST",
@@ -104,11 +104,6 @@
 			"ContainerName": {
 				"type": "string",
 				"defaultValue": "dbt"
-			}
-		},
-		"variables": {
-			"ContainerAppBaseUrl": {
-				"type": "String"
 			}
 		},
 		"annotations": []
