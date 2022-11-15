@@ -13,6 +13,10 @@
 			"SubscriptionId": {
 				"type": "string",
 				"value": "3b2b5aa8-6f16-4433-aa07-deb341acfda4"
+			},
+			"ResourceGroup": {
+				"type": "string",
+				"value": "dbt"
 			}
 		}
 	},
