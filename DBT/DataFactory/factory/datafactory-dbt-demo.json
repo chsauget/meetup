@@ -4,7 +4,7 @@
 		"globalParameters": {
 			"ContainerAppBaseUrl": {
 				"type": "string",
-				"value": "https://dbt--l03b927.calmground-c22380ff.northeurope.azurecontainerapps.io"
+				"value": " https://dbt--a1zd0yt.calmground-c22380ff.northeurope.azurecontainerapps.io"
 			},
 			"KeyVaultUrl": {
 				"type": "string",
