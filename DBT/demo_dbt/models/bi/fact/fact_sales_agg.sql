@@ -1,7 +1,7 @@
 {% set colors = ["Red", "Blue", "Black"] %}
 
 select 
-	date_format(OrderDate, 'yyyy-MM'),
+	date_format(OrderDate, 'yyyy-MM') as month_id,
     {% for color in colors %}
     sum(case when p.Color = '{{color}}' then LineTotal end) as {{color}}_Total,
     {% endfor %}
