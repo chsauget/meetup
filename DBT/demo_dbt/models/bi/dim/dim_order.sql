@@ -1,3 +1,7 @@
+{{ config(
+    tags=['dimension']
+) }}
+
 with raw as (
     select distinct 
         SalesOrderID

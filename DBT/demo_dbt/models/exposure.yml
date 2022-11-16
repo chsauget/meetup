@@ -1,0 +1,17 @@
+version: 2
+
+exposures:
+  - name: lerapportduceo
+    type: dashboard
+    maturity: high
+    url: https://app.powerbi.com/
+    description: >
+      Highly critical report
+
+    depends_on:
+      - ref('fact_sales_order')
+      - ref('dim_product')
+
+    owner:
+      name: Elon M.
+      email: elon@twitter.com
