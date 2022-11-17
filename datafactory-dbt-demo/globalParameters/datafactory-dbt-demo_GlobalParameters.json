@@ -1,10 +1,18 @@
 {
-	"ContainerAppBaseUrl": {
-		"type": "string",
-		"value": "https://dbt--l03b927.calmground-c22380ff.northeurope.azurecontainerapps.io"
-	},
 	"KeyVaultUrl": {
 		"type": "string",
 		"value": "https://keyvault-dbt-demo.vault.azure.net/"
+	},
+	"SubscriptionId": {
+		"type": "string",
+		"value": "3b2b5aa8-6f16-4433-aa07-deb341acfda4"
+	},
+	"ResourceGroup": {
+		"type": "string",
+		"value": "dbt"
+	},
+	"ContainerAppName": {
+		"type": "string",
+		"value": "dbt"
 	}
 }
